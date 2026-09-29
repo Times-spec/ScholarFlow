@@ -434,6 +434,8 @@ function routeSummary(plan) {
     hasUnknownCost: plan.totals.hasUnknownCost,
     coverage: plan.coverage ? { visited: plan.coverage.visitedTargetIds.length, eligible: plan.coverage.eligibleTargetIds.length, scopeLabel: plan.coverage.scopeLabel } : null,
     repeatRatio: plan.repeatRatio,
+    sightRepeatRatio: plan.sightRepeatRatio,
+    returnOverlapM: plan.returnOverlapM,
     status: plan.status,
     warnings: plan.warnings,
   };

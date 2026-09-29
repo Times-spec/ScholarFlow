@@ -37,9 +37,9 @@ function loadConfig() {
     admin: fileCfg.admin || {},
     limits: Object.assign({
       maxPoiCandidates: 24,
-      maxRoutingCalls: 110, // 12 候选 + 起点 = 13 节点两两 78 对，留重试余量
+      maxRoutingCalls: 110, // 13 候选 + 起点 = 14 节点两两 91 对；候选数由 maxCandidatesForQuota 反推，配额永远抓得满整张矩阵
       maxLlmTokens: 4000,
-      maxWallTimeSec: 45,
+      maxWallTimeSec: 90,   // 首次构建真实场所矩阵要顺序抓几十对步行路由（全局限速门约 360ms/次），之后走 10 分钟矩阵缓存
     }, fileCfg.limits || {}),
   };
   // Provider 模式判定：Key 齐备才算真实模式，否则演示模式（前端必须标注）

@@ -66,12 +66,20 @@ for (const scenario of scenarios) {
 }
 
 const normal = rows[0];
-assert.equal(normal.algorithm.route.repeatRatio, 0);
+// 标准闭环：存在无重复环路时，全程（含返程）都不该有重复路段
+assert.equal(normal.algorithm.route.repeatRatio, 0, '标准闭环不应出现重复路段');
 assert.equal(normal.agent.route.repeatRatio, 0);
 const deadEnd = rows[1];
-assert.equal(deadEnd.algorithm.conflict.code, 'NO_NON_REPEATING_ROUTE');
-assert.equal(deadEnd.agent.status, 'needs_user_decision');
-assert(deadEnd.agent.proposals.some((p) => p.previewRoute && verifyRoutePlan(p.previewRoute).ok), '智能体应给出保持零重复的可行修复提议');
+// 必去的死胡同点（湖心岛只有一座桥进出）+ 回起点：返程属通勤豁免，方案照常发布，
+// 但**游览段必须零重复**、必须如实提示"返程沿去程走回"，且必去点不得被丢点优化丢掉。
+// （这里此前期望整条判 NO_NON_REPEATING_ROUTE + 智能体给修复提议——那是"返程通勤豁免"落地前的旧语义，
+//  该断言在本次改动之前就已经是红的；智能体那条"改为在某点结束"的提议分支因此暂时不可达，
+//  但它仍守护着 endpoint.mode === 'return_to_origin' 的语义，故保留。）
+assert.equal(deadEnd.algorithm.route.sightRepeatedDistanceM, 0, '游览段不得重复任何物理路段');
+assert(deadEnd.algorithm.route.warnings.some((w) => w.code === 'RETURN_BACKTRACK'), '返程沿去程走回必须如实提示');
+assert(deadEnd.algorithm.route.stops.some((s) => s.poiId === 'poi_island'), '必去的死胡同点不得被丢点优化丢掉');
+assert.equal(deadEnd.agent.status, 'ready');
+assert.equal(deadEnd.agent.verification.ok, true);
 const multi = rows[2];
 assert(multi.algorithm.route && multi.algorithm.route.totals.distanceM <= 2200);
 assert(multi.agent.route && multi.agent.route.totals.distanceM <= 2200);

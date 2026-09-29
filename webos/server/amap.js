@@ -32,6 +32,45 @@ const rateGate = {
   relax() { this.minIntervalMs = Math.max(360, Math.round(this.minIntervalMs * 0.97)); },
 };
 
+/**
+ * 路由矩阵配额 → 最多能覆盖几个候选。
+ * n 个候选 + 起点 = n+1 个节点，两两 C(n+1,2) 对，另留约 10% 重试余量。
+ *
+ * 2026-09-30 修：此前是 `maxCalls = maxRoutingCalls − 8`，配上 config.json 里的 60，
+ * 12 个候选（13 节点）需要 78 对却只抓得到 52 对。抓取顺序是 for i / for j>i，
+ * 于是质量分最低的 5 个候选互相之间一条路都没有：插入一个点需要 prev→点 与 点→next 同时存在，
+ * 所以它们永远插不进多站路线，2-opt 里涉及它们的交换也只会静默失败。
+ * 最终顺序被"配额恰好覆盖了哪些点对"决定，而不是被地理决定。
+ */
+function maxCandidatesForQuota(maxRoutingCalls, reserveRatio = 0.1) {
+  const budget = Math.max(6, Math.floor((Number(maxRoutingCalls) || 60) * (1 - reserveRatio)));
+  let c = 1;
+  while (((c + 1) * c) / 2 <= budget) c++;
+  return Math.max(1, c - 1);
+}
+
+/** 步行路由矩阵缓存：同一场所 10 分钟内反复规划不再重抓同一批 OD（只有首次慢） */
+const matrixCache = new Map();
+const MATRIX_TTL_MS = 10 * 60 * 1000;
+const MATRIX_CACHE_MAX = 12;
+function matrixCacheGet(key) {
+  if (!key) return null;
+  const hit = matrixCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.at > MATRIX_TTL_MS) { matrixCache.delete(key); return null; }
+  return hit.value;
+}
+function matrixCacheSet(key, value) {
+  if (!key) return;
+  matrixCache.set(key, { at: Date.now(), value });
+  while (matrixCache.size > MATRIX_CACHE_MAX) matrixCache.delete(matrixCache.keys().next().value);
+}
+/** 起点按约 50m 网格取整后再进缓存键：GPS 轻微漂移不该让整张矩阵失效 */
+function matrixCacheKeyOf(prefix, origin, ids) {
+  const grid = 0.0005;
+  return `${prefix}|${Math.round(origin.lng / grid)}|${Math.round(origin.lat / grid)}|${ids.join(',')}`;
+}
+
 async function amapGetOnce(cfg, path, params) {
   await rateGate.pass();
   const qs = new URLSearchParams({ key: cfg.amap.webServiceKey, ...params }).toString();
@@ -173,7 +212,7 @@ class AmapAreaGraph {
   get nodeById() { return this.nodes; }
   get edgeById() { return this._edges; }
 
-  async init(cands) {
+  async init(cands, opts = {}) {
     this.nodes.set('am_origin', {
       id: 'am_origin', name: this.origin.label || '起点', type: 'entrance',
       lng: this.origin.lng, lat: this.origin.lat, status: 'open',
@@ -181,41 +220,100 @@ class AmapAreaGraph {
     for (const c of cands) {
       this.nodes.set(c.id, { id: c.id, name: c.name, type: 'poi', lng: c.lng, lat: c.lat, status: 'open' });
     }
-    // 预取路由矩阵（起点 + 候选 ≤10 个），受预算约束；全局限速门已保证 QPS
     const ids = ['am_origin', ...cands.map((c) => c.id)];
-    const maxCalls = Math.max(6, (this.cfg.limits.maxRoutingCalls || 60) - 8);
-    let calls = 0;
+
+    // 命中缓存：矩阵直接复原，一次网络请求都不发（同一场所反复规划只有首次慢）
+    const cached = matrixCacheGet(opts.cacheKey);
+    if (cached && cached.ids === ids.join('|')) {
+      this._restoreMatrix(cached, ids);
+      this._dropUnreachable(cands);
+      return;
+    }
+
+    // 预取路由矩阵（起点 + 候选），受配额约束；全局限速门已保证 QPS。
+    // 配额按"尝试次数"计：失败的请求同样占配额，否则被限流时会一直重试拖垮任务。
+    const maxCalls = Math.max(6, this.cfg.limits.maxRoutingCalls || 60);
+    let attempts = 0;
     const fetchPair = async (i, j) => {
+      if (attempts >= maxCalls) return false;
+      attempts++;
       const a = this.nodes.get(ids[i]), b = this.nodes.get(ids[j]);
       try {
         const r = await walkingRoute(this.cfg, a, b);
-        calls++;
         this.routingCalls++;
         const eid = 'ame_' + (++this._edgeSeq);
         const physicalSegmentKeys = geometrySegmentKeys(r.geometry);
         this._edges.set(eid, { id: eid, from: ids[i], to: ids[j], lengthM: r.distanceM, walkAllowed: true, stepsKnown: false, steps: null, physicalSegmentKeys });
-        this._routeCache.set(ids[i] + '>' + ids[j], { status: 'ok', distanceM: r.distanceM, nodeIds: [ids[i], ids[j]], edgeIds: [eid], geometry: r.geometry, physicalSegmentKeys, repeatDetection: 'geometry-grid-approx', provider: 'amap-walking' });
-        this._routeCache.set(ids[j] + '>' + ids[i], { status: 'ok', distanceM: r.distanceM, nodeIds: [ids[j], ids[i]], edgeIds: [eid], geometry: [...r.geometry].reverse(), physicalSegmentKeys, repeatDetection: 'geometry-grid-approx', provider: 'amap-walking' });
+        this._storePair(ids[i], ids[j], eid, r.distanceM, r.geometry, physicalSegmentKeys, true);
         return true;
       } catch (e) {
-        this._routeCache.set(ids[i] + '>' + ids[j], { status: 'unreachable', distanceM: null, nodeIds: [], edgeIds: [], geometry: [], error: e.message });
-        this._routeCache.set(ids[j] + '>' + ids[i], { status: 'unreachable', distanceM: null, nodeIds: [], edgeIds: [], geometry: [], error: e.message });
+        this._storePair(ids[i], ids[j], null, null, [], [], false, e.message);
         return false;
       }
     };
-    for (let i = 0; i < ids.length && calls < maxCalls; i++) {
-      for (let j = i + 1; j < ids.length && calls < maxCalls; j++) await fetchPair(i, j);
+    for (let i = 0; i < ids.length; i++) {
+      for (let j = i + 1; j < ids.length; j++) {
+        if (attempts >= maxCalls) break;
+        await fetchPair(i, j);
+      }
+      if (attempts >= maxCalls) break;
     }
-    // 二次重试：起点↔候选的边必须拿到真实路由，否则候选会被误判不可达
-    for (let j = 1; j < ids.length && calls < maxCalls; j++) {
-      const key = ids[0] + '>' + ids[j];
-      const cur = this._routeCache.get(key);
+    // 二次重试：起点↔候选的边必须拿到真实路由，否则候选会被误判不可达。
+    // （此前这里是 `calls < maxCalls`，而 calls 早已等于上限，重试一次都没跑过。）
+    for (let j = 1; j < ids.length && attempts < maxCalls; j++) {
+      const cur = this._routeCache.get(ids[0] + '>' + ids[j]);
       if (!cur || cur.status !== 'ok') await fetchPair(0, j);
     }
-    // 仍不可达的点位剔除（诚实：无真实路由就不参与规划）
+    this._dropUnreachable(cands);
+    matrixCacheSet(opts.cacheKey, this._snapshot(ids));
+  }
+
+  /** 写入一对 OD 的正反两条缓存（无向：正反共用距离，折线反向） */
+  _storePair(a, b, eid, distanceM, geometry, physicalSegmentKeys, ok, error) {
+    if (!ok) {
+      const miss = { status: 'unreachable', distanceM: null, nodeIds: [], edgeIds: [], geometry: [], error: error || 'amap route failed' };
+      this._routeCache.set(a + '>' + b, miss);
+      this._routeCache.set(b + '>' + a, miss);
+      return;
+    }
+    const base = { status: 'ok', distanceM, nodeIds: [a, b], edgeIds: [eid], geometry, physicalSegmentKeys, repeatDetection: 'geometry-grid-approx', provider: 'amap-walking' };
+    this._routeCache.set(a + '>' + b, base);
+    this._routeCache.set(b + '>' + a, { ...base, nodeIds: [b, a], geometry: [...geometry].reverse() });
+  }
+
+  /** 仍不可达的点位剔除（诚实：无真实路由就不参与规划） */
+  _dropUnreachable(cands) {
     for (const c of cands) {
       const r = this._routeCache.get('am_origin>' + c.id);
       if (!r || r.status !== 'ok') this.nodes.delete(c.id);
+    }
+  }
+
+  _snapshot(ids) {
+    const legs = [];
+    for (let i = 0; i < ids.length; i++) {
+      for (let j = i + 1; j < ids.length; j++) {
+        const r = this._routeCache.get(ids[i] + '>' + ids[j]);
+        if (!r) continue;
+        legs.push({
+          i, j, ok: r.status === 'ok', eid: (r.edgeIds && r.edgeIds[0]) || null,
+          distanceM: r.distanceM, geometry: r.geometry, physicalSegmentKeys: r.physicalSegmentKeys || null,
+        });
+      }
+    }
+    return { ids: ids.join('|'), edgeSeq: this._edgeSeq, legs };
+  }
+
+  _restoreMatrix(snap, ids) {
+    this._edgeSeq = snap.edgeSeq || 0;
+    for (const L of snap.legs) {
+      if (!ids[L.i] || !ids[L.j]) continue;
+      if (L.ok && L.eid) {
+        this._edges.set(L.eid, { id: L.eid, from: ids[L.i], to: ids[L.j], lengthM: L.distanceM, walkAllowed: true, stepsKnown: false, steps: null, physicalSegmentKeys: L.physicalSegmentKeys });
+        this._storePair(ids[L.i], ids[L.j], L.eid, L.distanceM, L.geometry, L.physicalSegmentKeys, true);
+      } else {
+        this._storePair(ids[L.i], ids[L.j], null, null, [], [], false);
+      }
     }
   }
 
@@ -249,20 +347,22 @@ class AmapAreaGraph {
 async function buildAmapAreaPack(cfg, origin, budgetSec) {
   const radiusM = Math.min(4000, Math.max(1200, Math.round((budgetSec / 3600) * 2500)));
   const rawCands = await searchAround(cfg, origin, radiusM);
-  // 粗筛：按类型分桶保证多样性，每桶取最近 4 个，再按预算取前 8~12 进精算（§7.4 评分压缩；
-  // 候选上限受路由矩阵 maxRoutingCalls 约束：13 节点两两 78 对 < 110）
+  // 粗筛：按类型分桶保证多样性，每桶取最近 4 个，再按预算取前 8~12 进精算（§7.4 评分压缩）。
+  // 候选数同时受路由矩阵配额约束：配额必须够抓满"起点 + 候选"的两两组合，
+  // 否则末尾的候选拿不到任何 OD 边、永远排不进多站路线（2026-09-30 修）。
   const buckets = new Map();
   for (const c of rawCands.sort((a, b) => a.distanceM - b.distanceM)) {
     const key = c.tags[0];
     if (!buckets.has(key)) buckets.set(key, []);
     if (buckets.get(key).length < 4) buckets.get(key).push(c);
   }
-  const cap = budgetSec >= 10800 ? 12 : 8; // 3 小时以上放宽池子，半天不该只有五六个可选点
+  const capByBudget = budgetSec >= 10800 ? 12 : 8; // 3 小时以上放宽池子，半天不该只有五六个可选点
+  const cap = Math.min(capByBudget, maxCandidatesForQuota(cfg.limits.maxRoutingCalls));
   const cands = [...buckets.values()].flat()
     .sort((a, b) => b.scenic - a.scenic || a.distanceM - b.distanceM)
     .slice(0, cap);
   const graph = new AmapAreaGraph(cfg, origin, budgetSec);
-  await graph.init(cands);
+  await graph.init(cands, { cacheKey: matrixCacheKeyOf('area', origin, cands.map((c) => c.id)) });
   const usable = cands.filter((c) => graph.nodes.has(c.id));
   const pack = {
     venue: {
@@ -298,4 +398,4 @@ async function buildAmapAreaPack(cfg, origin, budgetSec) {
   return { pack, graph };
 }
 
-module.exports = { searchAround, walkingRoute, textSearch, regeo, convertCoord, buildAmapAreaPack, AmapAreaGraph, amapGet, mapType };
+module.exports = { searchAround, walkingRoute, textSearch, regeo, convertCoord, buildAmapAreaPack, AmapAreaGraph, amapGet, mapType, maxCandidatesForQuota, matrixCacheKeyOf };

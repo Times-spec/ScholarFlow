@@ -88,6 +88,13 @@ function createTraversalConstraintState(intent, graph) {
     return result;
   }
 
+  /** 只读探测：不改变约束状态（usedEdgeIds / distanceM 都不动）。
+   *  用于"要不要为了不走回头路而多绕一点路"这类比较——直接调 route() 会双计量里程。 */
+  function probe(fromId, toId, callOpts = {}) {
+    const forbiddenEdgeIds = hard.noRepeatedEdges && !callOpts.allowRepeat ? usedEdgeIds : null;
+    return graph.route(fromId, toId, { forbiddenEdgeIds });
+  }
+
   function validateFinal(stops) {
     if (hard.maxDistanceM != null && distanceM > hard.maxDistanceM) {
       return { ok: false, code: 'MAX_DISTANCE_EXCEEDED', details: { actualM: distanceM, limitM: hard.maxDistanceM } };
@@ -110,7 +117,7 @@ function createTraversalConstraintState(intent, graph) {
     };
   }
 
-  return { hard, route, validateFinal, metrics };
+  return { hard, route, probe, validateFinal, metrics };
 }
 
 function repeatedEdgeMetrics(legs, graph) {

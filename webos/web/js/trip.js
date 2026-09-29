@@ -145,9 +145,12 @@ export function renderTrip(view, ctx, tripId) {
     } // end !usedAmap
 
     /* 行程状态条 */
-    const visitedCount = route.stops.filter((st) => v.has(st.poiId)).length;
+    // 重排后新版本只含剩余站点，按"当前版本里的已完成数"会显示成"已完成 0/N"（2026-09-30 修）：
+    // 已到访按行程事件累计，剩余按当前版本算，两者分别说明。
+    const visitedTotal = new Set(tripData.events.filter((e) => e.type === 'arrive_confirm').map((e) => e.data.poiId)).size;
+    const remainingCount = route.stops.filter((st) => !v.has(st.poiId) && !s.has(st.poiId)).length;
     root.append(h('div', { class: 'confirm-bar', style: 'margin-top:10px' },
-      h('span', { class: 'cchip' }, `已完成 ${visitedCount}/${route.stops.length} 站`),
+      h('span', { class: 'cchip' }, `已到访 ${visitedTotal} 站 · 剩余 ${remainingCount} 站`),
       h('span', { class: 'cchip' }, `预计 ${fmtClock(route.endArrivalAt)} 到终点`),
       h('span', { class: 'cchip' }, `路线 v${route.version}`),
       trip.status === 'paused' ? h('span', { class: 'cchip', style: 'background:var(--warn-bg);color:var(--warn)' }, '已暂停') : null));

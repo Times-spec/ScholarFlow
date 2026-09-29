@@ -77,7 +77,10 @@ export function renderPlan(view, ctx, planId) {
           h('span', {}, s.endLabel),
           h('span', {}, s.hasUnknownCost ? '费用部分待确认' : s.knownCostCny > 0 ? `约 ¥${s.knownCostCny}` : '门票 ¥0')),
         s.coverage ? h('div', { class: 'tl-meta' }, `${s.coverage.scopeLabel}，本路线覆盖 ${s.coverage.visited} 个`) : null,
-        v.repeatRatio > 0.05 ? h('div', { class: 'tl-meta' }, `重复路段约 ${Math.round(v.repeatRatio * 100)}%（死胡同/唯一桥梁等必要重复）`) : null,
+        v.repeatRatio > 0.05 ? h('div', { class: 'tl-meta' },
+          `重复路段约 ${Math.round(v.repeatRatio * 100)}%`
+          + (v.sightRepeatRatio > 0.05 ? `；其中游览段约 ${Math.round(v.sightRepeatRatio * 100)}% 为死胡同/唯一通道等必要重复` : '')
+          + (v.returnOverlapM > 50 ? `；返程约 ${fmtKm(v.returnOverlapM)} 沿去程走回（回起点的必经通勤）` : '')) : null,
         tradeoffText(versions, v) ? h('div', { class: 'rc-tradeoff' }, tradeoffText(versions, v)) : null,
         (v.warnings || []).map((w) => h('div', { class: 'rc-warn' }, '⚠ ' + w.message)));
     };
@@ -267,7 +270,7 @@ export function renderPlan(view, ctx, planId) {
         if (evt.type === 'route.ready') {
           un();
           toast('已生成新版本：' + (evt.payload.diffLines || []).join('；'));
-          loadPlan(true);
+          loadPlan(true, evt.payload.routeId);
         } else if (evt.type === 'job.failed') {
           un();
           toast(evt.payload.message || '修改后不可行，已保留原路线', 4000);
@@ -369,12 +372,16 @@ export function renderPlan(view, ctx, planId) {
       h('button', { class: 'btn btn-ghost btn-block', onclick: () => { location.hash = '#/'; } }, '返回修改条件'));
   }
 
-  async function loadPlan(keepSel) {
+  async function loadPlan(keepSel, selectRouteId) {
     const seq = ++loadSeq;
     const data = await get('/v1/plans/' + planId);
     if (seq !== loadSeq) return; // 已有更新的加载在跑，本轮结果作废
     planData = data;
-    if (!keepSel || !planData.versions.some((v) => v.routeId === selRouteId)) {
+    // 编辑/换序产生的新版本要立刻选中：否则页面继续渲染旧版本，
+    // 用户点完 ↑↓ 看到顺序纹丝不动（2026-09-30 修）
+    if (selectRouteId && planData.versions.some((v) => v.routeId === selectRouteId)) {
+      selRouteId = selectRouteId;
+    } else if (!keepSel || !planData.versions.some((v) => v.routeId === selRouteId)) {
       const main = planData.versions.find((v) => v.routeId === planData.plan.mainRouteId) || planData.versions[0];
       selRouteId = main ? main.routeId : null;
     }

@@ -5,7 +5,7 @@ const assert = require('assert');
 const { VenueGraph, solveOnce, buildRoutePlan } = require('../server/planner');
 const { createTraversalConstraintState, geometrySegmentKeys } = require('../server/route_constraints');
 
-function packOf({ loop }) {
+function packOf({ loop, endSpur }) {
   const nodes = [
     { id: 's', name: '起点', type: 'entrance', lng: 104, lat: 30, status: 'open' },
     { id: 'a', name: '景点 A', type: 'poi', lng: 104.001, lat: 30, status: 'open' },
@@ -17,6 +17,11 @@ function packOf({ loop }) {
       { id: 'e_ab', from: 'a', to: 'b', lengthM: 100, walkAllowed: true, closed: false },
       { id: 'e_bs', from: 'b', to: 's', lengthM: 100, walkAllowed: true, closed: false },
     );
+  }
+  if (endSpur) {
+    // 指定终点只能从起点绕过去：离开景点再走到这里必须重走 e_sa
+    nodes.push({ id: 'c', name: '指定终点', type: 'entrance', lng: 104.002, lat: 30, status: 'open' });
+    edges.push({ id: 'e_sc', from: 's', to: 'c', lengthM: 100, walkAllowed: true, closed: false });
   }
   const pois = [{
     id: 'a', name: '景点 A', entranceNode: 'a', tags: ['自然'], scenic: 1,
@@ -66,11 +71,40 @@ const policy = { interestW: 1, timeCostW: 0.55, dwellFactor: 1 };
 }
 
 {
+  // 死胡同 + 回起点：返程是通勤性质，允许沿去程走回，但必须如实计量并给出提示，
+  // 而且**游览段仍严格零重复**。（此前这里期望 infeasible——那是"返程通勤豁免"落地前的旧语义，
+  // 该断言在本次改动之前就已经是红的。）
   const pack = packOf({ loop: false });
   const graph = new VenueGraph(pack);
-  const solved = solveOnce(pack, intentOf(), graph, policy);
+  const intent = intentOf();
+  const solved = solveOnce(pack, intent, graph, policy);
+  assert.equal(solved.status, 'ok', '回起点的死胡同往返：返程走通勤豁免，不再整条判不可行');
+  assert.equal(solved.schedule.totals.repeatSightM, 0, '游览段仍不得重复任何物理边');
+  const plan = buildRoutePlan(pack, intent, graph, solved, { version: 1, planId: 'p' });
+  assert.equal(plan.constraints.find((c) => c.key === 'no_repeated_edges').result, 'pass');
+  const backtrack = plan.warnings.find((w) => w.code === 'RETURN_BACKTRACK');
+  assert(backtrack, '返程沿去程走回必须如实提示');
+  assert(/沿去程走回/.test(backtrack.message), '提示文案要说清沿去程走回了多少米');
+}
+
+{
+  // 终点不在起点：没有"通勤豁免"可降级，死胡同的重复必须被拒绝（这条保护意图不能丢）
+  const pack = packOf({ loop: false, endSpur: true });
+  const graph = new VenueGraph(pack);
+  const solved = solveOnce(pack, intentOf({ endpoint: { mode: 'fixed', entranceId: 'c', label: '指定终点' } }), graph, policy);
   assert.equal(solved.status, 'infeasible', '死胡同往返不能伪装成无回头路方案');
   assert.equal(solved.conflict.code, 'NO_NON_REPEATING_ROUTE');
+}
+
+{
+  // 返程有干净环路可走时，不得为了省几步路而原路返回（2026-09-30 修）
+  const pack = packOf({ loop: true });
+  const graph = new VenueGraph(pack);
+  const solved = solveOnce(pack, intentOf(), graph, policy);
+  const endEdgeIds = solved.schedule.endLeg.edgeIds;
+  assert.equal(new Set(endEdgeIds).size, endEdgeIds.length, '返程内部不得重复');
+  assert(!endEdgeIds.includes('e_sa'), '环路可达时返程不得沿去程原路走回');
+  assert(solved.schedule.totals.repeatAllM === 0, '存在无重复环路时全程重复距离应为 0');
 }
 
 {

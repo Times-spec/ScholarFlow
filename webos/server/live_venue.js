@@ -8,7 +8,7 @@
  * - 开放时间/门票高德不提供 → 标记 unknown，方案标为条件性；
  * - 路段一律走高德步行路径规划（真实折线），没有真实路由的边标 unreachable，绝不用直线顶替。
  */
-const { AmapAreaGraph, amapGet, mapType, textSearch } = require('./amap');
+const { AmapAreaGraph, amapGet, mapType, textSearch, maxCandidatesForQuota, matrixCacheKeyOf } = require('./amap');
 const { haversineM } = require('./geo');
 
 const VENUE_TYPECODES = ['110101', '110102', '110103', '110105', '110200', '110202', '141201', '141200'];
@@ -128,7 +128,9 @@ async function resolveVenue(cfg, venueRef) {
   }
   const picked = [...buckets.values()].flat()
     .sort((a, b) => b.quality - a.quality)
-    .slice(0, 12); // 半天预算装得下更多点；12 候选路由矩阵 78 对 < maxRoutingCalls
+    // 半天预算装得下更多点；上限同时受路由矩阵配额约束（候选 + 起点两两成对都要抓得到），
+    // 否则末尾的候选拿不到任何 OD 边、永远排不进多站路线（2026-09-30 修）
+    .slice(0, Math.min(12, maxCandidatesForQuota(cfg.limits.maxRoutingCalls)));
 
   const value = { venueRef, center, pois: picked, entrances: picked.filter((p) => p.isEntrance) };
   return cacheSet(key, value);
@@ -144,7 +146,7 @@ async function buildLiveVenue(cfg, venueRef, origin, budgetSec) {
   const cands = resolved.pois.map((p) => ({
     id: p.id, name: p.shortName, lng: p.lng, lat: p.lat,
   }));
-  await graph.init(cands);
+  await graph.init(cands, { cacheKey: matrixCacheKeyOf('venue:' + venueRef.id, originPoint, cands.map((c) => c.id)) });
 
   const usable = resolved.pois.filter((p) => graph.nodes.has(p.id));
   const venueId = venueRef.id;

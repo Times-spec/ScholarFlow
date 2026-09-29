@@ -204,10 +204,25 @@ function scheduleRoute(pack, intent, graph, nodeSeq, opts = {}) {
   let endNodeId = opts.endNodeId;
   let endLeg = null;
   if (endNodeId && endNodeId !== prevNode) {
-    // 回到起点的返程允许沿去程走回（通勤性质；真实街道网上回程必然重复去程），
-    // 游览段仍严格不重复；重复距离照常计量并在校验层如实提示
+    // 返程选路：能不走回头路就不走。此前 allowRepeat 直接把"不重复物理路段"约束关掉，
+    // 于是一律取最短路——哪怕旁边就有一条干净的环路，也照样原路返回（2026-09-30 修）。
+    // 但绕行不能离谱：超出阈值时仍按最短路走，重复距离如实计量并在校验层提示。
+    // 真实街道网上回程往往必然重复去程，所以这里的降级是"通勤豁免"而非"零重复"。
     const isReturnTrip = opts.isReturnTrip || endNodeId === opts.startNodeId;
-    const r = traversal.route(prevNode, endNodeId, { allowRepeat: isReturnTrip });
+    let allowRepeat = isReturnTrip;
+    if (isReturnTrip && traversal.hard.noRepeatedEdges) {
+      const clean = traversal.probe(prevNode, endNodeId, { allowRepeat: false });
+      if (clean.status === 'ok') {
+        const direct = traversal.probe(prevNode, endNodeId, { allowRepeat: true });
+        if (direct.status !== 'ok') {
+          allowRepeat = false;
+        } else {
+          const detourM = clean.distanceM - direct.distanceM;
+          allowRepeat = detourM > Math.max(RETURN_DETOUR_MAX_EXTRA_M, direct.distanceM * (RETURN_DETOUR_MAX_RATIO - 1));
+        }
+      }
+    }
+    const r = traversal.route(prevNode, endNodeId, { allowRepeat });
     if (r.status !== 'ok') {
       problems.push({ nodeId: endNodeId, code: r.code || (traversal.hard.noRepeatedEdges ? 'end_requires_repeated_edge' : 'end_unreachable') });
       return { ok: false, problems, constraintMetrics: traversal.metrics() };
@@ -230,11 +245,70 @@ function scheduleRoute(pack, intent, graph, nodeSeq, opts = {}) {
     return { ok: false, problems, constraintMetrics: traversal.metrics() };
   }
 
+  // 顺序质量的两个量度（§8.5：物理路段合并正反向，演示包按 edgeId 精确、真实包按折线网格近似）：
+  // - repeatSightM 游览段重复：决定"这个点值不值得排"（重走同一条街要付代价）；
+  // - repeatAllM   全程重复：决定"哪个顺序更不绕"（回起点的返程也计入，末站落点因此会影响排序）。
+  const repeatSightM = repeatedEdgeMetrics(legs, graph).repeatedDistanceM;
+  const repeatAllM = repeatedEdgeMetrics(endLeg ? [...legs, endLeg] : legs, graph).repeatedDistanceM;
+
   return {
     ok: true, stops, legs, endLeg, endArrivalMs, restSec, bufferSec,
-    totals: { travelSec, dwellSec: dwellSecTotal, waitSec: waitSecTotal, restSec, bufferSec, distanceM, totalSec },
+    totals: { travelSec, dwellSec: dwellSecTotal, waitSec: waitSecTotal, restSec, bufferSec, distanceM, totalSec, repeatSightM, repeatAllM },
     constraintMetrics: traversal.metrics(),
   };
+}
+
+/* ================= 顺序质量：字典序目标（§8.2） =================
+ * 用户说的"少走回头路"（soft.repeatRoadPenalty，默认就是 1）此前只在事后 repeatRatio
+ * 统计里出现，求解时三处比较键都只有 totalSec —— 于是"重走同一条街"对排序零影响，
+ * 折返与回程原路返回在求解器眼里完全不可见（2026-09-30 修）。
+ * 现改为字典序比较：
+ *   ① 重复步行距离（越少越好，按 50m 分档吸收折线网格近似带来的噪声）
+ *   ② 总步行距离
+ *   ③ 总时长（含等开门时间，只作最后的兜底，不再拿它换"多走路"）
+ */
+const REPEAT_BUCKET_M = 50;
+const REPEAT_GATE_W = 1.5; // 1 米"再走一遍"在收益判定里约等于 1.5 米新路
+// 返程绕行阈值：只要"不重复的那条返程"比最短路多出的距离不超过这个范围，就宁可绕一点也别原路返回
+const RETURN_DETOUR_MAX_EXTRA_M = 150;
+const RETURN_DETOUR_MAX_RATIO = 1.35;
+
+function repeatPenaltyOn(intent) { return intent.soft?.repeatRoadPenalty !== 0; }
+
+function routeCost(sch, intent) {
+  const rep = repeatPenaltyOn(intent) ? Math.round((sch.totals.repeatAllM || 0) / REPEAT_BUCKET_M) : 0;
+  return [rep, sch.totals.distanceM || 0, sch.totals.totalSec || 0];
+}
+
+function costLess(a, b) {
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return a[i] < b[i];
+  return false;
+}
+
+/** 用户按顺序指定的必去点，其相对先后不得被局部换序（区间反转/单点搬迁）改动 */
+function keepsLockedOrder(nodeSeq, lockedOrder) {
+  if (lockedOrder.length < 2) return true;
+  const pos = new Map();
+  nodeSeq.forEach((n, i) => pos.set(n, i));
+  let last = -1;
+  for (const n of lockedOrder) {
+    const p = pos.get(n);
+    if (p === undefined) continue; // 该点还没排进来
+    if (p < last) return false;
+    last = p;
+  }
+  return true;
+}
+
+/** 返程与游览段重叠的距离估计：回起点时必然沿去程走回的那部分（通勤性质，单独计量） */
+function returnOverlapM(schedule) {
+  const endLeg = schedule.endLeg;
+  if (!endLeg) return 0;
+  const seen = new Set(schedule.legs.flatMap((l) => l.physicalSegmentKeys || (l.edgeIds || []).map((e) => 'e:' + e)));
+  const retKeys = endLeg.physicalSegmentKeys || (endLeg.edgeIds || []).map((e) => 'e:' + e);
+  if (!retKeys.length) return 0;
+  const overlap = retKeys.filter((k) => seen.has(k)).length;
+  return Math.round(endLeg.distanceM * overlap / retKeys.length);
 }
 
 /* ================= 求解层（§8.2 启发式） ================= */
@@ -265,10 +339,14 @@ function solveOnce(pack, intent, graph, policy) {
     return { status: 'infeasible', conflict: noCandidatesConflict(intent) };
   }
 
-  // 1) 必去骨架：最近邻排序
-  const musts = cands.filter((c) => c.must).map((c) => c.poi.entranceNode);
-  const skeleton = nearestNeighborOrder(graph, startNodeId, musts);
-  let seq = [...skeleton];
+  // 1) 必去骨架：用户在选点面板/表单里按顺序点了几个必去点，就照他给的先后走
+  //    （此前一律被最近邻重排，用户"我排好的顺序"完全不被尊重）；只有从集合里挑的才用最近邻。
+  const mustCands = cands.filter((c) => c.must);
+  const nnOrder = nearestNeighborOrder(graph, startNodeId, mustCands.map((c) => c.poi.entranceNode));
+  const mustNodeByPoiId = new Map(mustCands.map((c) => [c.poi.id, c.poi.entranceNode]));
+  const userOrder = (intent.hard.mustVisitIds || []).filter((id) => mustNodeByPoiId.has(id)).map((id) => mustNodeByPoiId.get(id));
+  const userOrdered = mustCands.length > 1 && userOrder.length === mustCands.length;
+  const lockedOrder = userOrdered ? userOrder : [];
 
   const constraintProblems = [];
   const trySchedule = (s) => {
@@ -277,90 +355,143 @@ function solveOnce(pack, intent, graph, policy) {
     for (const en of ends) {
       const sch = scheduleRoute(pack, intent, graph, s, { startNodeId, endNodeId: en, dwellFactor: policy.dwellFactor });
       if (!sch.ok && sch.problems) constraintProblems.push(...sch.problems);
-      if (sch.ok && sch.totals.totalSec <= intent.budgetSec && (!best || sch.totals.totalSec < best.totals.totalSec)) {
+      if (sch.ok && sch.totals.totalSec <= intent.budgetSec && (!best || costLess(routeCost(sch, intent), routeCost(best, intent)))) {
         best = { ...sch, resolvedEndNodeId: en };
       }
     }
     return best;
   };
 
-  // 2) 可选点按"收益 / 增量时间"插入（第一个点先保证有内容，"没排到任何点"对用户没有价值）。
-  //    成本必须用增量时长（插入后总时长 − 插入前总时长）：若用全程总时长当成本，
-  //    行程刚过一两个小时收益就恒负，半天预算只排得进两三个点（2026-09-30 修复）。
   const optional = cands.filter((c) => !c.must);
-  let insertedAny = seq.length > 0;
-  let curSch = seq.length ? trySchedule(seq) : null;
-  const tryInsert = (cand) => {
-    const nid = cand.poi.entranceNode;
-    const baseSec = curSch ? curSch.totals.totalSec : 0;
-    let bestPos = -1, bestDelta = Infinity, bestTrial = null;
-    for (let pos = 0; pos <= seq.length; pos++) {
-      const trial = [...seq.slice(0, pos), nid, ...seq.slice(pos)];
-      const sch = trySchedule(trial);
-      if (!sch) continue;
-      const delta = sch.totals.totalSec - baseSec;
-      const gain = cand.score * policy.interestW - delta / 3600 * policy.timeCostW;
-      // 首个点位放宽收益门槛（否则离起点较远时会一个点都排不进去）
-      const accepted = (gain > 0 || !insertedAny) && delta < bestDelta;
-      if (accepted) { bestDelta = delta; bestPos = pos; bestTrial = sch; }
-    }
-    if (bestPos >= 0) {
-      seq.splice(bestPos, 0, nid);
-      curSch = bestTrial;
-      insertedAny = true;
-      return true;
-    }
-    return false;
-  };
-  for (const cand of optional) tryInsert(cand);
+  const repeatOn = repeatPenaltyOn(intent);
+  const droppable = new Set(optional.map((c) => c.poi.entranceNode)); // 必去点不在可丢集合里
 
-  // 3) 预算填充：主循环按收益门槛收敛后，剩余预算还装得下一个点就继续补——
-  //    用户给的是"半天"，不该只逛两三个点就闲着。按分数密度（score/增量小时）挑最划算的候选。
-  //    relax 目标除外（§2.2：放松不堆点，少而精是合法结果）。
-  if (intent.objective !== 'relax') {
-    while (true) {
-      const pool = optional.filter((c) => !seq.includes(c.poi.entranceNode));
-      if (!pool.length) break;
+  /** 从一个骨架出发跑完"可选点插入 → 预算填充 → 局部换序"，返回最终序列与排程 */
+  function optimizeFrom(skeleton) {
+    let seq = [...skeleton];
+    let insertedAny = seq.length > 0;
+    let curSch = seq.length ? trySchedule(seq) : null;
+
+    // 2) 可选点按"收益 / 增量时间"插入（第一个点先保证有内容，"没排到任何点"对用户没有价值）。
+    //    成本必须用增量时长（插入后总时长 − 插入前总时长）：若用全程总时长当成本，
+    //    行程刚过一两个小时收益就恒负，半天预算只排得进两三个点（2026-09-30 修复）。
+    //    收益里再扣掉"这段路得走第二遍"的代价（游览段重复；回起点的通勤不计入这里）。
+    const tryInsert = (cand) => {
+      const nid = cand.poi.entranceNode;
       const baseSec = curSch ? curSch.totals.totalSec : 0;
-      let chosen = null;
-      for (const cand of pool) {
-        const nid = cand.poi.entranceNode;
-        let bestPos = -1, bestDelta = Infinity, bestTrial = null;
-        for (let pos = 0; pos <= seq.length; pos++) {
-          const trial = [...seq.slice(0, pos), nid, ...seq.slice(pos)];
-          const sch = trySchedule(trial);
-          if (sch && sch.totals.totalSec - baseSec < bestDelta) {
-            bestDelta = sch.totals.totalSec - baseSec; bestPos = pos; bestTrial = sch;
+      const baseRepeat = curSch ? curSch.totals.repeatSightM || 0 : 0;
+      let bestPos = -1, bestTrial = null, bestCost = null;
+      for (let pos = 0; pos <= seq.length; pos++) {
+        const trial = [...seq.slice(0, pos), nid, ...seq.slice(pos)];
+        const sch = trySchedule(trial);
+        if (!sch) continue;
+        const delta = sch.totals.totalSec - baseSec;
+        const dRepeat = (sch.totals.repeatSightM || 0) - baseRepeat;
+        const gain = cand.score * policy.interestW - delta / 3600 * policy.timeCostW
+          - (repeatOn ? dRepeat / 1000 * REPEAT_GATE_W : 0);
+        // 首个点位放宽收益门槛（否则离起点较远时会一个点都排不进去）；
+        // 但就算放宽，也不该拿"再走一遍同一条街"去换内容——死胡同支路由此自然被劝退。
+        if (!(gain > 0 || (!insertedAny && dRepeat <= 0))) continue;
+        const c = routeCost(sch, intent);
+        if (!bestCost || costLess(c, bestCost)) { bestCost = c; bestPos = pos; bestTrial = sch; }
+      }
+      if (bestPos >= 0) {
+        seq.splice(bestPos, 0, nid);
+        curSch = bestTrial;
+        insertedAny = true;
+        return true;
+      }
+      return false;
+    };
+    for (const cand of optional) tryInsert(cand);
+
+    // 3) 预算填充：主循环按收益门槛收敛后，剩余预算还装得下一个点就继续补——
+    //    用户给的是"半天"，不该只逛两三个点就闲着。按分数密度（score/增量小时）挑最划算的候选。
+    //    relax 目标除外（§2.2：放松不堆点，少而精是合法结果）。
+    if (intent.objective !== 'relax') {
+      while (true) {
+        const pool = optional.filter((c) => !seq.includes(c.poi.entranceNode));
+        if (!pool.length) break;
+        const baseSec = curSch ? curSch.totals.totalSec : 0;
+        let chosen = null;
+        for (const cand of pool) {
+          const nid = cand.poi.entranceNode;
+          let bestPos = -1, bestDelta = 0, bestTrial = null, bestCost = null;
+          for (let pos = 0; pos <= seq.length; pos++) {
+            const trial = [...seq.slice(0, pos), nid, ...seq.slice(pos)];
+            const sch = trySchedule(trial);
+            if (!sch) continue;
+            const c = routeCost(sch, intent);
+            if (!bestCost || costLess(c, bestCost)) {
+              bestCost = c; bestPos = pos; bestTrial = sch; bestDelta = sch.totals.totalSec - baseSec;
+            }
+          }
+          if (bestTrial) {
+            const density = cand.score * 3600 / Math.max(600, bestDelta);
+            if (!chosen || density > chosen.density) chosen = { nid, pos: bestPos, sch: bestTrial, density };
           }
         }
-        if (bestTrial) {
-          const density = cand.score * 3600 / Math.max(600, bestDelta);
-          if (!chosen || density > chosen.density) chosen = { nid, pos: bestPos, sch: bestTrial, density };
+        if (!chosen) break; // 剩余候选一个都塞不进预算
+        seq.splice(chosen.pos, 0, chosen.nid);
+        curSch = chosen.sch;
+        insertedAny = true;
+      }
+    }
+
+    // 4) 局部换序：2-opt（区间反转）+ Or-opt（单点搬迁）交替迭代到收敛。
+    //    此前只做 3 轮、接受门槛是"总时长改善 > 15 秒"：既修不动贪心插入留下的折返，
+    //    又会为了少等 15 秒开门而接受"多走 200 米"的换序（2026-09-30 修）。
+    //    接受任何一次改进都立刻重开一轮：试算必须始终基于同一个 seq，否则会把旧快照和新序列混起来。
+    let bestSch = trySchedule(seq);
+    if (bestSch && seq.length >= 3) {
+      const budget = Math.max(240, seq.length * seq.length * 4); // 评估次数上限：换序不把规划时间拖长
+      let evals = 0;
+      const tryMove = (trial) => {
+        if (evals++ > budget) return false;
+        if (!keepsLockedOrder(trial, lockedOrder)) return false;
+        const sch = trySchedule(trial);
+        if (sch && costLess(routeCost(sch, intent), routeCost(bestSch, intent))) { seq = trial; bestSch = sch; return true; }
+        return false;
+      };
+      let improved = true;
+      while (improved && evals < budget) {
+        improved = false;
+        for (let i = 0; i < seq.length - 1 && !improved && evals < budget; i++) {
+          for (let j = i + 1; j < seq.length && !improved && evals < budget; j++) {
+            if (tryMove([...seq.slice(0, i), ...seq.slice(i, j + 1).reverse(), ...seq.slice(j + 1)])) improved = true;
+          }
+        }
+        for (let i = 0; i < seq.length && !improved && evals < budget; i++) {
+          const rest = [...seq.slice(0, i), ...seq.slice(i + 1)];
+          const item = seq[i];
+          for (let k = 0; k <= rest.length && !improved && evals < budget; k++) {
+            if (k === i) continue; // 搬回原位置等于没搬
+            if (tryMove([...rest.slice(0, k), item, ...rest.slice(k)])) improved = true;
+          }
+        }
+        // 丢点：只在"去掉这一站能让整条路线少走回头路"时才丢（用户必去点、锁定点、
+        // 以及不造成重复的点都不动）。否则预算填充补进来的点会一路被丢光——
+        // 这里正是"死胡同点位能不去就不去"的落点：去了必须原路返回的点，除非别处省得回来，否则请出去。
+        for (const nid of [...seq]) {
+          if (improved || evals >= budget) break;
+          if (seq.length < 2 || !droppable.has(nid)) continue;
+          const trial = seq.filter((x) => x !== nid);
+          if (evals++ > budget) break;
+          if (!keepsLockedOrder(trial, lockedOrder)) continue;
+          const sch = trySchedule(trial);
+          if (sch && routeCost(sch, intent)[0] < routeCost(bestSch, intent)[0]) { seq = trial; bestSch = sch; improved = true; }
         }
       }
-      if (!chosen) break; // 剩余候选一个都塞不进预算
-      seq.splice(chosen.pos, 0, chosen.nid);
-      curSch = chosen.sch;
-      insertedAny = true;
+      bestSch = trySchedule(seq);
     }
+    return bestSch ? { seq, sch: bestSch } : null;
   }
 
-  // 4) 2-opt 局部换序（限量迭代）
-  let bestSch = trySchedule(seq);
-  for (let iter = 0; iter < 3 && seq.length >= 3; iter++) {
-    let improved = false;
-    for (let i = 0; i < seq.length - 1; i++) {
-      for (let j = i + 1; j < seq.length; j++) {
-        const trial = [...seq.slice(0, i), ...seq.slice(i, j + 1).reverse(), ...seq.slice(j + 1)];
-        const sch = trySchedule(trial);
-        if (sch && (!bestSch || sch.totals.totalSec < bestSch.totals.totalSec - 15)) {
-          seq = trial; bestSch = sch; improved = true;
-        }
-      }
-    }
-    if (!improved) break;
-  }
-  bestSch = trySchedule(seq);
+  // 用户给的顺序排不出来（硬约束/时间窗不允许）时才退回最近邻——不能因为尊重顺序把本该可行的方案变成不可行
+  let solved = optimizeFrom(userOrdered ? userOrder : nnOrder);
+  if (!solved && userOrdered) solved = optimizeFrom(nnOrder);
+  const seq = solved ? solved.seq : [];
+  const bestSch = solved ? solved.sch : null;
 
   if (!seq.length) {
     if (constraintProblems.some((p) => ['REPEATED_EDGE', 'no_non_repeating_path', 'end_requires_repeated_edge'].includes(p.code))) {
@@ -435,13 +566,10 @@ function validatePlan(pack, intent, graph, solved) {
     });
   }
   if (returnTrip) {
-    const seen = new Set(sightLegs.flatMap((l) => l.physicalSegmentKeys || (l.edgeIds || []).map((e) => 'e:' + e)));
-    const retKeys = schedule.endLeg.physicalSegmentKeys || (schedule.endLeg.edgeIds || []).map((e) => 'e:' + e);
-    const overlap = retKeys.filter((k) => seen.has(k)).length;
-    const overlapM = Math.round(schedule.endLeg.distanceM * overlap / Math.max(1, retKeys.length));
+    const overlapM = returnOverlapM(schedule);
     warnings.push({
       code: 'RETURN_BACKTRACK',
-      message: overlap > 0
+      message: overlapM > 0
         ? `返程约 ${Math.round(schedule.endLeg.distanceM)}m，其中约 ${overlapM}m 沿去程走回（回到起点的必经通勤）`
         : '返程与去程路段不重叠',
       evidenceIds: [],
@@ -498,9 +626,14 @@ function buildRoutePlan(pack, intent, graph, solved, versionInfo) {
   const tz = intent.timezone;
   const fmt = (ms) => tk.msToZoned(ms, tz).iso;
 
-  // 重复路段率（§8.5：物理路段 ID 合并正反向）
+  // 重复路段率（§8.5：物理路段 ID 合并正反向）。
+  // repeatRatio 是"整条路线里有多大比例在重走"——含回起点的返程，这是走路的人真实感受到的比例；
+  // 同时把返程重叠与游览段重复拆开，前端才能说清"这部分是回起点的必经通勤"，
+  // 而不是笼统地让人以为整条路线在来回折返（此前展示口径含返程、校验口径不含，同一份路线会自相矛盾）。
   const allLegs = [...schedule.legs, ...(schedule.endLeg ? [schedule.endLeg] : [])];
   const repeat = repeatedEdgeMetrics(allLegs, graph);
+  const sightRepeat = repeatedEdgeMetrics(schedule.legs, graph);
+  const returnOverlap = schedule.endLeg ? returnOverlapM(schedule) : 0;
 
   // 费用
   let knownCostCny = 0, hasUnknownCost = false;
@@ -601,6 +734,9 @@ function buildRoutePlan(pack, intent, graph, solved, versionInfo) {
     latestEndAt: intent.latestEndAt,
     repeatRatio: Math.round(repeat.repeatRatio * 100) / 100,
     repeatedDistanceM: Math.round(repeat.repeatedDistanceM),
+    sightRepeatRatio: Math.round(sightRepeat.repeatRatio * 100) / 100,
+    sightRepeatedDistanceM: Math.round(sightRepeat.repeatedDistanceM),
+    returnOverlapM: returnOverlap,
     coverage: {
       kind: 'poi',
       visitedTargetIds,

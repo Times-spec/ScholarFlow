@@ -20,9 +20,9 @@
   },
   "limits": {
     "maxPoiCandidates": 24,
-    "maxRoutingCalls": 60,
+    "maxRoutingCalls": 110,
     "maxLlmTokens": 4000,
-    "maxWallTimeSec": 45
+    "maxWallTimeSec": 90
   },
   "admin": {
     "token": ""
