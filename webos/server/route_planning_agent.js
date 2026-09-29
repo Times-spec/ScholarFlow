@@ -29,8 +29,9 @@ function compileConstraintLedger(intent) {
 }
 
 /** 与求解器分离的最后一道验证，避免“求解成功”被误当成“可以发布”。
- * 豁免规则与 scheduleRoute/validatePlan 一致：返程回起点属通勤段，
- * 允许沿去程走回（真实街道网回程必然重复去程），游览段仍要求零重复。 */
+ * 豁免规则与 scheduleRoute/validatePlan 一致：
+ * ① 返程回起点属通勤段，允许沿去程走回（真实街道网回程必然重复去程）；
+ * ② plan.noRepeatedEdges === false 时（真实高德包放宽），重复只计量不拦截。 */
 function verifyRoutePlan(plan) {
   const violations = [];
   for (let i = 1; i < plan.legs.length; i++) {
@@ -41,14 +42,16 @@ function verifyRoutePlan(plan) {
   const returnTrip = !!(plan.startNodeId != null && plan.endNodeId === plan.startNodeId
     && plan.legs.length && plan.legs[plan.legs.length - 1].isReturnLeg);
   const sightLegs = returnTrip ? plan.legs.slice(0, -1) : plan.legs;
-  const used = new Set();
-  for (const leg of sightLegs) {
-    const keys = leg.physicalSegmentKeys?.length
-      ? leg.physicalSegmentKeys
-      : (leg.edgeIds || []).map((eid) => `e:${eid}`);
-    for (const key of keys) {
-      if (used.has(key)) violations.push({ code: 'REPEATED_PHYSICAL_SEGMENT', key });
-      used.add(key);
+  if (plan.noRepeatedEdges !== false) {
+    const used = new Set();
+    for (const leg of sightLegs) {
+      const keys = leg.physicalSegmentKeys?.length
+        ? leg.physicalSegmentKeys
+        : (leg.edgeIds || []).map((eid) => `e:${eid}`);
+      for (const key of keys) {
+        if (used.has(key)) violations.push({ code: 'REPEATED_PHYSICAL_SEGMENT', key });
+        used.add(key);
+      }
     }
   }
   for (const c of plan.constraints || []) {

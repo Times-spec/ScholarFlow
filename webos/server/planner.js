@@ -413,18 +413,27 @@ function validatePlan(pack, intent, graph, solved) {
   const stopIds = new Set(schedule.stops.map((s) => s.nodeId));
   constraints.push({ key: 'must_visit_present', result: intent.hard.mustVisitIds.every((m) => stopIds.has(m)) ? 'pass' : 'fail', evidenceIds: [] });
   constraints.push({ key: 'avoid_absent', result: intent.hard.avoidPoiIds.every((a) => !stopIds.has(a)) ? 'pass' : 'fail', evidenceIds: [] });
-  // 固定约束：游览段不得重复任何物理路段；返程回起点允许沿去程走回（通勤性质，如实计量并提示）
+  // 不重复路段约束：已核验步道网（演示场所包）保持硬约束；真实高德包放宽为"计量+诚实标注"
+  // （真实街道网上任意两段步行路线几乎必然共享街段，硬约束会把多站路线压到 2 站）。
   const allLegs = [...schedule.legs, ...(schedule.endLeg ? [schedule.endLeg] : [])];
   const returnTrip = !!(schedule.endLeg && solved.endNodeId === solved.startNodeId);
   const sightLegs = returnTrip ? schedule.legs : allLegs;
+  const noRepeatHard = intent.hard?.noRepeatedEdges !== false;
   const repeat = repeatedEdgeMetrics(sightLegs, graph);
   const repeatApprox = sightLegs.some((l) => l.repeatDetection === 'geometry-grid-approx');
   constraints.push({
     key: 'no_repeated_edges',
-    result: repeat.repeatedEdgeIds.length ? 'fail' : repeatApprox ? 'unknown' : 'pass',
+    result: repeat.repeatedEdgeIds.length ? (noRepeatHard ? 'fail' : 'unknown') : repeatApprox ? 'unknown' : 'pass',
     evidenceIds: repeat.repeatedEdgeIds,
     verification: repeatApprox ? 'polyline_spatial_match_approx' : 'physical_edge_id_exact',
   });
+  if (!noRepeatHard && repeat.repeatedDistanceM > 30) {
+    warnings.push({
+      code: 'REPEAT_ALLOWED',
+      message: `真实路网放宽"零重复"硬约束：游览段含约 ${Math.round(repeat.repeatedDistanceM)}m 重复路段（已在下方如实计量）`,
+      evidenceIds: [],
+    });
+  }
   if (returnTrip) {
     const seen = new Set(sightLegs.flatMap((l) => l.physicalSegmentKeys || (l.edgeIds || []).map((e) => 'e:' + e)));
     const retKeys = schedule.endLeg.physicalSegmentKeys || (schedule.endLeg.edgeIds || []).map((e) => 'e:' + e);
@@ -604,6 +613,7 @@ function buildRoutePlan(pack, intent, graph, solved, versionInfo) {
     createdAt: nowIso(),
     revalidateAfter: fmt(schedule.endArrivalMs + 3600000),
     provenance: { solverVersion: SOLVER_VERSION, policyVersion: POLICY_VERSION, dataVersion: pack.venue.packVersion },
+    noRepeatedEdges: intent.hard?.noRepeatedEdges !== false, // 独立校验器按同一语义复核
     startNodeId: solved.startNodeId,
     endNodeId: solved.endNodeId,
     candidateCount: solved.candidateCount || 0,

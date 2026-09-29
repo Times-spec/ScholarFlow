@@ -27,8 +27,24 @@ class JobRunner {
   packOf(venueId) { return this.ctx.packs.find((p) => p.venue.id === venueId); }
   graphOf(venueId) { return this.graphs.get(venueId); }
 
+  /** 不重复路段硬约束只适用于已核验步道网（自有演示场所包）；
+   *  真实高德包（live:/area_amap）的街道网上任意两段步行路线几乎必然共享街段，
+   *  硬约束会把多站路线压到一两站 → 放宽为"计量+诚实标注"（validatePlan/校验器按同一语义）。 */
+  alignTraversalConstraint(intent, pack) {
+    if (!pack) return;
+    const isLive = pack.venue.live === true || intent.venueId === 'area_amap';
+    if (isLive) intent.hard = { ...(intent.hard || {}), noRepeatedEdges: false };
+    else if (intent.hard && intent.hard.noRepeatedEdges === undefined) intent.hard.noRepeatedEdges = true;
+  }
+
   /** 场所包与图：真实场所/真实片区走高德实时构建；来源为自有数据的场所包直接取用 */
   async resolvePackGraph(intent) {
+    const out = await this._resolvePackGraph(intent);
+    this.alignTraversalConstraint(intent, out.pack);
+    return out;
+  }
+
+  async _resolvePackGraph(intent) {
     if (this.ctx.cfg.providers.map !== 'amap') {
       const local = this.packOf(intent.venueId);
       if (local) return { pack: local, graph: this.graphOf(intent.venueId) };

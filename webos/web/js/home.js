@@ -458,6 +458,14 @@ export function renderHome(view) {
     saveDraft(); closeSheet(); rerender();
   }
 
+  /* ================= 组合选点：先搜大致位置 → 地图点准到具体门 ================= */
+  // 统一入口：演示场所包用 SVG 园区图（含路网/大门，选点更准），其余走高德组合面板
+  async function openPointPicker(purpose) {
+    const isLive = String(d.venueId || '').startsWith('live:');
+    if (d.venueId && !isLive) return openMapPick(purpose);
+    return openAmapPicker(purpose);
+  }
+
   async function openMapPick(purpose) {
     const isLive = String(d.venueId || '').startsWith('live:');
     if (isLive || !d.venueId) return openAmapPicker(purpose);
