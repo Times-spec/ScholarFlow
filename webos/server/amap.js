@@ -7,6 +7,7 @@
  * - 与场所包同构输出（VenueGraph 接口 + pack 结构），求解/校验层零改动复用。
  */
 const { haversineM } = require('./geo');
+const { geometrySegmentKeys } = require('./route_constraints');
 
 const AMAP = 'https://restapi.amap.com';
 
@@ -191,9 +192,10 @@ class AmapAreaGraph {
         calls++;
         this.routingCalls++;
         const eid = 'ame_' + (++this._edgeSeq);
-        this._edges.set(eid, { id: eid, from: ids[i], to: ids[j], lengthM: r.distanceM, walkAllowed: true, stepsKnown: false, steps: null });
-        this._routeCache.set(ids[i] + '>' + ids[j], { status: 'ok', distanceM: r.distanceM, nodeIds: [ids[i], ids[j]], edgeIds: [eid], geometry: r.geometry, provider: 'amap-walking' });
-        this._routeCache.set(ids[j] + '>' + ids[i], { status: 'ok', distanceM: r.distanceM, nodeIds: [ids[j], ids[i]], edgeIds: [eid], geometry: [...r.geometry].reverse(), provider: 'amap-walking' });
+        const physicalSegmentKeys = geometrySegmentKeys(r.geometry);
+        this._edges.set(eid, { id: eid, from: ids[i], to: ids[j], lengthM: r.distanceM, walkAllowed: true, stepsKnown: false, steps: null, physicalSegmentKeys });
+        this._routeCache.set(ids[i] + '>' + ids[j], { status: 'ok', distanceM: r.distanceM, nodeIds: [ids[i], ids[j]], edgeIds: [eid], geometry: r.geometry, physicalSegmentKeys, repeatDetection: 'geometry-grid-approx', provider: 'amap-walking' });
+        this._routeCache.set(ids[j] + '>' + ids[i], { status: 'ok', distanceM: r.distanceM, nodeIds: [ids[j], ids[i]], edgeIds: [eid], geometry: [...r.geometry].reverse(), physicalSegmentKeys, repeatDetection: 'geometry-grid-approx', provider: 'amap-walking' });
         return true;
       } catch (e) {
         this._routeCache.set(ids[i] + '>' + ids[j], { status: 'unreachable', distanceM: null, nodeIds: [], edgeIds: [], geometry: [], error: e.message });
@@ -217,13 +219,19 @@ class AmapAreaGraph {
     }
   }
 
-  route(fromId, toId) {
+  route(fromId, toId, opts = {}) {
     if (fromId === toId) {
       const n = this.nodes.get(fromId);
       return { status: 'ok', distanceM: 0, nodeIds: [fromId], edgeIds: [], geometry: n ? [[n.lng, n.lat]] : [] };
     }
     const hit = this._routeCache.get(fromId + '>' + toId);
-    if (hit) return hit;
+    if (hit) {
+      const forbidden = opts.forbiddenEdgeIds;
+      if (forbidden && (hit.edgeIds || []).some((eid) => forbidden.has(eid))) {
+        return { status: 'constraint_violation', code: 'REPEATED_EDGE', distanceM: null, nodeIds: [], edgeIds: hit.edgeIds, geometry: [] };
+      }
+      return hit;
+    }
     return { status: 'unreachable', distanceM: null, nodeIds: [], edgeIds: [], geometry: [] }; // 无真实路由的边不伪造
   }
   nearestNode(point, types) {

@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js",
-    "test": "node scripts/acceptance.js"
+    "test": "node scripts/acceptance.js",
+    "test:planner-constraints": "node scripts/planner-constraints.js"
   }
 }

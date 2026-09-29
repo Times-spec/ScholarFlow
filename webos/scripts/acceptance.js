@@ -142,17 +142,20 @@ async function main() {
     {
       const r = await makePlan(T, baseForm({ objective: 'poi_coverage', durationSec: 1800 }), '');
       const v = r.plan.versions[0];
-      const cov = v.coverage;
-      check('时间不足时展示真实覆盖分母', cov && cov.eligibleTargetIds.length === 11 && cov.visitedTargetIds.length < 11,
-        JSON.stringify(cov && { v: cov.visitedTargetIds.length, e: cov.eligibleTargetIds.length }));
+      const cov = v && v.coverage;
+      const explicitConflict = !v && r.plan.plan.status === 'infeasible' && r.plan.plan.conflict;
+      check('时间不足时展示真实覆盖分母或明确冲突',
+        (cov && cov.eligibleTargetIds.length === 11 && cov.visitedTargetIds.length < 11) || explicitConflict,
+        JSON.stringify(cov ? { v: cov.visitedTargetIds.length, e: cov.eligibleTargetIds.length } : r.plan.plan.conflict));
     }
 
-    // 用例 8：湖心岛（唯一桥梁死胡同）必去 → 重复距离被正确计入（§19.1-9）
+    // 用例 8：湖心岛（唯一桥梁死胡同）必去 → 固定“不重复物理路段”约束下明确不可行
     {
       const r = await makePlan(T, baseForm({ mustVisitIds: ['poi_island'] }), '');
       const v = r.plan.versions[0];
-      const hasIsland = v.stops.some((s) => s.poiId === 'poi_island');
-      check('死胡同型重复计入重复率', hasIsland && v.repeatRatio > 0.01, 'repeat=' + v.repeatRatio);
+      const conflict = r.plan.plan.conflict;
+      check('死胡同必去不发布回头路方案', !v && r.plan.plan.status === 'infeasible'
+        && conflict && conflict.code === 'NO_NON_REPEATING_ROUTE', JSON.stringify(conflict));
     }
 
     // 用例 9：讲解异步就绪、来源完整、TTS 明确不可用（§9/§11）

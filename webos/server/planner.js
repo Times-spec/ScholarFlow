@@ -8,9 +8,10 @@
  */
 const tk = require('./timekit');
 const { id, nowIso, clamp } = require('./util');
+const { createTraversalConstraintState, repeatedEdgeMetrics } = require('./route_constraints');
 
-const SOLVER_VERSION = 'heuristic-1.0.0';
-const POLICY_VERSION = 'policy-2026-09-1';
+const SOLVER_VERSION = 'heuristic-1.1.0';
+const POLICY_VERSION = 'policy-2026-09-2';
 const WALK_SPEED = { easy: 0.9, normal: 1.1, active: 1.3 }; // m/s
 
 /* ================= 路由层：已核验路网 ================= */
@@ -30,10 +31,12 @@ class VenueGraph {
     this._cache = new Map();
   }
   /** Dijkstra 最短步行路径；不可达返回 {status:'unreachable'}，绝不回退直线（§8.6） */
-  route(fromId, toId) {
+  route(fromId, toId, opts = {}) {
     if (fromId === toId) return { status: 'ok', distanceM: 0, nodeIds: [fromId], edgeIds: [], geometry: this._geom([fromId]) };
+    const forbiddenEdgeIds = opts.forbiddenEdgeIds || null;
+    const cacheable = !forbiddenEdgeIds || forbiddenEdgeIds.size === 0;
     const key = fromId + '>' + toId;
-    if (this._cache.has(key)) return this._cache.get(key);
+    if (cacheable && this._cache.has(key)) return this._cache.get(key);
     const dist = new Map([[fromId, 0]]);
     const prev = new Map();
     const visited = new Set();
@@ -45,6 +48,7 @@ class VenueGraph {
       visited.add(u);
       if (u === toId) break;
       for (const { to, edge } of this.adj.get(u) || []) {
+        if (forbiddenEdgeIds && forbiddenEdgeIds.has(edge.id)) continue;
         const nd = d + edge.lengthM;
         if (nd < (dist.get(to) ?? Infinity)) {
           dist.set(to, nd);
@@ -68,10 +72,12 @@ class VenueGraph {
       }
       result = { status: 'ok', distanceM: dist.get(toId), nodeIds, edgeIds, geometry: this._geom(nodeIds) };
     }
-    this._cache.set(key, result);
-    this._cache.set(toId + '>' + fromId, result.status === 'ok'
-      ? { ...result, nodeIds: [...result.nodeIds].reverse(), edgeIds: [...result.edgeIds].reverse(), geometry: [...result.geometry].reverse() }
-      : result);
+    if (cacheable) {
+      this._cache.set(key, result);
+      this._cache.set(toId + '>' + fromId, result.status === 'ok'
+        ? { ...result, nodeIds: [...result.nodeIds].reverse(), edgeIds: [...result.edgeIds].reverse(), geometry: [...result.geometry].reverse() }
+        : result);
+    }
     return result;
   }
   _geom(nodeIds) {
@@ -128,13 +134,17 @@ function scheduleRoute(pack, intent, graph, nodeSeq, opts = {}) {
   let t = intent.startAtMs;
   let prevNode = opts.startNodeId;
   const problems = [];
+  const traversal = createTraversalConstraintState(intent, graph);
 
   for (const nodeId of nodeSeq) {
-    const r = graph.route(prevNode, nodeId);
-    if (r.status !== 'ok') { problems.push({ nodeId, code: 'unreachable' }); return { ok: false, problems }; }
+    const r = traversal.route(prevNode, nodeId);
+    if (r.status !== 'ok') {
+      problems.push({ nodeId, code: r.code || (traversal.hard.noRepeatedEdges ? 'no_non_repeating_path' : 'unreachable') });
+      return { ok: false, problems, constraintMetrics: traversal.metrics() };
+    }
     const travelSec = Math.round(r.distanceM / speed);
     const arrival = t + travelSec * 1000;
-    legs.push({ fromNodeId: prevNode, toNodeId: nodeId, mode: 'walk', distanceM: r.distanceM, travelSec, edgeIds: r.edgeIds, geometry: r.geometry, provider: r.provider || null });
+    legs.push({ fromNodeId: prevNode, toNodeId: nodeId, mode: 'walk', distanceM: r.distanceM, travelSec, edgeIds: r.edgeIds, geometry: r.geometry, physicalSegmentKeys: r.physicalSegmentKeys || null, repeatDetection: r.repeatDetection || 'edge-id-exact', provider: r.provider || null });
     const poi = poiById.get(nodeId);
     if (!poi) { // 途经纯节点（理论上 nodeSeq 都是 POI，防御）
       t = arrival; prevNode = nodeId; continue;
@@ -194,9 +204,12 @@ function scheduleRoute(pack, intent, graph, nodeSeq, opts = {}) {
   let endNodeId = opts.endNodeId;
   let endLeg = null;
   if (endNodeId && endNodeId !== prevNode) {
-    const r = graph.route(prevNode, endNodeId);
-    if (r.status !== 'ok') { problems.push({ nodeId: endNodeId, code: 'end_unreachable' }); return { ok: false, problems }; }
-    endLeg = { fromNodeId: prevNode, toNodeId: endNodeId, mode: 'walk', distanceM: r.distanceM, travelSec: Math.round(r.distanceM / speed), edgeIds: r.edgeIds, geometry: r.geometry, provider: r.provider || null };
+    const r = traversal.route(prevNode, endNodeId);
+    if (r.status !== 'ok') {
+      problems.push({ nodeId: endNodeId, code: r.code || (traversal.hard.noRepeatedEdges ? 'end_requires_repeated_edge' : 'end_unreachable') });
+      return { ok: false, problems, constraintMetrics: traversal.metrics() };
+    }
+    endLeg = { fromNodeId: prevNode, toNodeId: endNodeId, mode: 'walk', distanceM: r.distanceM, travelSec: Math.round(r.distanceM / speed), edgeIds: r.edgeIds, geometry: r.geometry, physicalSegmentKeys: r.physicalSegmentKeys || null, repeatDetection: r.repeatDetection || 'edge-id-exact', provider: r.provider || null };
   }
   const endArrivalMs = t + (endLeg ? endLeg.travelSec * 1000 : 0);
 
@@ -208,10 +221,16 @@ function scheduleRoute(pack, intent, graph, nodeSeq, opts = {}) {
   // 缓冲：总预算 10%~15%，带上限（§8.4）
   const bufferSec = clamp(Math.round(intent.budgetSec * 0.12), 300, 1800);
   const totalSec = Math.round((endArrivalMs - intent.startAtMs) / 1000) + bufferSec;
+  const finalConstraint = traversal.validateFinal(stops);
+  if (!finalConstraint.ok) {
+    problems.push({ code: finalConstraint.code, ...finalConstraint.details });
+    return { ok: false, problems, constraintMetrics: traversal.metrics() };
+  }
 
   return {
     ok: true, stops, legs, endLeg, endArrivalMs, restSec, bufferSec,
     totals: { travelSec, dwellSec: dwellSecTotal, waitSec: waitSecTotal, restSec, bufferSec, distanceM, totalSec },
+    constraintMetrics: traversal.metrics(),
   };
 }
 
@@ -248,11 +267,13 @@ function solveOnce(pack, intent, graph, policy) {
   const skeleton = nearestNeighborOrder(graph, startNodeId, musts);
   let seq = [...skeleton];
 
+  const constraintProblems = [];
   const trySchedule = (s) => {
     const ends = endNodeId ? [endNodeId] : pack.venue.entrances;
     let best = null;
     for (const en of ends) {
       const sch = scheduleRoute(pack, intent, graph, s, { startNodeId, endNodeId: en, dwellFactor: policy.dwellFactor });
+      if (!sch.ok && sch.problems) constraintProblems.push(...sch.problems);
       if (sch.ok && sch.totals.totalSec <= intent.budgetSec && (!best || sch.totals.totalSec < best.totals.totalSec)) {
         best = { ...sch, resolvedEndNodeId: en };
       }
@@ -338,7 +359,16 @@ function solveOnce(pack, intent, graph, policy) {
   }
   bestSch = trySchedule(seq);
 
+  if (!seq.length) {
+    if (constraintProblems.some((p) => ['REPEATED_EDGE', 'no_non_repeating_path', 'end_requires_repeated_edge'].includes(p.code))) {
+      return { status: 'infeasible', conflict: noBacktrackingConflict(intent) };
+    }
+    return { status: 'infeasible', conflict: noCandidatesConflict(intent) };
+  }
   if (!bestSch) {
+    if (constraintProblems.some((p) => ['REPEATED_EDGE', 'no_non_repeating_path', 'end_requires_repeated_edge'].includes(p.code))) {
+      return { status: 'infeasible', conflict: noBacktrackingConflict(intent) };
+    }
     return { status: 'infeasible', conflict: buildTimeConflict(pack, intent, graph, seq, startNodeId, endNodeId) };
   }
   return { status: 'ok', schedule: bestSch, startNodeId, endNodeId: bestSch.resolvedEndNodeId, candidateCount: cands.length };
@@ -380,6 +410,19 @@ function validatePlan(pack, intent, graph, solved) {
   const stopIds = new Set(schedule.stops.map((s) => s.nodeId));
   constraints.push({ key: 'must_visit_present', result: intent.hard.mustVisitIds.every((m) => stopIds.has(m)) ? 'pass' : 'fail', evidenceIds: [] });
   constraints.push({ key: 'avoid_absent', result: intent.hard.avoidPoiIds.every((a) => !stopIds.has(a)) ? 'pass' : 'fail', evidenceIds: [] });
+  // 固定约束：正反向共用同一物理 edgeId；任何重复都不得发布为可执行路线。
+  const allLegs = [...schedule.legs, ...(schedule.endLeg ? [schedule.endLeg] : [])];
+  const repeat = repeatedEdgeMetrics(allLegs, graph);
+  const repeatApprox = allLegs.some((l) => l.repeatDetection === 'geometry-grid-approx');
+  constraints.push({
+    key: 'no_repeated_edges',
+    result: repeat.repeatedEdgeIds.length ? 'fail' : repeatApprox ? 'unknown' : 'pass',
+    evidenceIds: repeat.repeatedEdgeIds,
+    verification: repeatApprox ? 'polyline_spatial_match_approx' : 'physical_edge_id_exact',
+  });
+  if (repeatApprox && !repeat.repeatedEdgeIds.length) {
+    warnings.push({ code: 'BACKTRACKING_APPROXIMATED', message: '真实路线已按折线空间匹配规避重叠，但地图服务未提供稳定道路 ID，无法证明绝对零重复', evidenceIds: [] });
+  }
   // 5. 无障碍硬条件：未知台阶不得标为可执行（§8.7-5）
   if (intent.hard.stepFreeRequired) {
     const usedEdges = new Set();
@@ -430,15 +473,7 @@ function buildRoutePlan(pack, intent, graph, solved, versionInfo) {
 
   // 重复路段率（§8.5：物理路段 ID 合并正反向）
   const allLegs = [...schedule.legs, ...(schedule.endLeg ? [schedule.endLeg] : [])];
-  const physical = new Set();
-  let totalLen = 0, uniqueLen = 0;
-  for (const l of allLegs) {
-    totalLen += l.distanceM;
-    for (const eid of l.edgeIds) {
-      if (!physical.has(eid)) { physical.add(eid); uniqueLen += (graph.edgeById.get(eid) || {}).lengthM || 0; }
-    }
-  }
-  const repeatRatio = totalLen > 0 ? Math.max(0, (totalLen - uniqueLen) / totalLen) : 0;
+  const repeat = repeatedEdgeMetrics(allLegs, graph);
 
   // 费用
   let knownCostCny = 0, hasUnknownCost = false;
@@ -501,6 +536,8 @@ function buildRoutePlan(pack, intent, graph, solved, versionInfo) {
     travelSec: l.travelSec,
     distanceM: l.distanceM,
     edgeIds: l.edgeIds,
+    physicalSegmentKeys: l.physicalSegmentKeys || undefined,
+    repeatDetection: l.repeatDetection || 'edge-id-exact',
     geometry: { crs: 'GCJ02', coordinates: l.geometry },
     provider: l.provider || 'demo-venue-network',
     verifiedAt: pack.evidence[0] ? pack.evidence[0].retrievedAt : null,
@@ -535,7 +572,8 @@ function buildRoutePlan(pack, intent, graph, solved, versionInfo) {
     endArrivalAt: fmt(schedule.endArrivalMs),
     startAt: intent.startAt,
     latestEndAt: intent.latestEndAt,
-    repeatRatio: Math.round(repeatRatio * 100) / 100,
+    repeatRatio: Math.round(repeat.repeatRatio * 100) / 100,
+    repeatedDistanceM: Math.round(repeat.repeatedDistanceM),
     coverage: {
       kind: 'poi',
       visitedTargetIds,
@@ -642,6 +680,21 @@ function noCandidatesConflict(intent) {
     suggestions: [
       { action: 'relax_avoid', label: '减少避开点', effect: '恢复部分候选' },
       { action: 'extend_time', label: '换个时间段', effect: '避开关闭窗口' },
+    ],
+  };
+}
+
+function noBacktrackingConflict(intent) {
+  const returning = intent.endpoint.mode === 'return_to_origin';
+  return {
+    code: 'NO_NON_REPEATING_ROUTE',
+    message: returning
+      ? '在当前路网和站点条件下，无法在不重复任何物理路段的前提下返回起点'
+      : '在当前路网和站点条件下，没有找到不重复物理路段的可行路线',
+    violations: [{ field: 'no_repeated_edges', message: '部分目标位于死胡同、桥接路段之后，或可用环路不足', evidenceIds: [] }],
+    suggestions: [
+      { action: 'change_endpoint_flexible', label: '改为顺路结束', effect: '避免为返回起点而重复路段' },
+      { action: 'remove_stop', label: '减少位于支路末端的站点', effect: '保留无重复环线' },
     ],
   };
 }

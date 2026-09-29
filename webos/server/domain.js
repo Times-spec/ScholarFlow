@@ -300,6 +300,8 @@ function normalizeIntent(input, packs, preParsed = null) {
   const hard = {
     mustVisitIds,
     avoidPoiIds,
+    // 产品固定约束：路线不得重复使用同一物理路段；正反向按同一 edgeId 计算。
+    noRepeatedEdges: form.noRepeatedEdges !== false,
     maxDistanceM: form.maxDistanceM || null,
     maxCostCny: form.budgetHardZero ? 0 : parsed.hard.maxCostCny ?? null,
     stepFreeRequired: !!(form.stepFreeRequired || parsed.hard.stepFreeRequired),
@@ -366,6 +368,7 @@ function confirmChips(intent) {
   if (intent.hard.stepFreeRequired) chips.push({ field: 'access', label: '轮椅可达（硬条件）' });
   else if (intent.soft.stepFewPreferred) chips.push({ field: 'access', label: '少台阶' });
   if (intent.hard.mustVisitIds.length) chips.push({ field: 'must', label: `必去 ${intent.hard.mustVisitIds.length} 处` });
+  if (intent.hard.noRepeatedEdges) chips.push({ field: 'route', label: '不走重复路段' });
   return chips;
 }
 
