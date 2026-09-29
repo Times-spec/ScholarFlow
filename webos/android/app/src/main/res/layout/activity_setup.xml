@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F4F7F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="连接服务端"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#1C2420" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="13sp"
+            android:textColor="#5A6A62"
+            android:text="本应用把规划、地图与讲解交给服务端完成。先在电脑上启动服务端：\n\n    node server/index.js\n\n然后填入这台电脑的地址（同一个 Wi-Fi 下用局域网 IP，模拟器用 10.0.2.2）。" />
+
+        <EditText
+            android:id="@+id/input_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="http://192.168.1.25:8080"
+            android:inputType="textUri"
+            android:textColorHint="#9DB0A7"
+            android:textSize="16sp"
+            android:background="#FFFFFF"
+            android:padding="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/btn_fill_emu"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="模拟器地址"
+                android:textSize="13sp"
+                android:textColor="#1C2420"
+                android:background="#E3F2EC" />
+
+            <Button
+                android:id="@+id/btn_fill_lan"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="本机局域网地址"
+                android:textSize="13sp"
+                android:textColor="#1C2420"
+                android:background="#E3F2EC" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_test"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="16dp"
+            android:text="测试连接并保存"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="#0F6F4F" />
+
+        <Button
+            android:id="@+id/btn_save_only"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginTop="8dp"
+            android:text="仅保存（服务端暂时不通时）"
+            android:textSize="14sp"
+            android:textColor="#5A6A62"
+            android:background="#E9EFEC" />
+
+        <TextView
+            android:id="@+id/result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textSize="13sp"
+            android:lineSpacingExtra="4dp"
+            android:textColor="#1C2420" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:textSize="12sp"
+            android:textColor="#8A9A92"
+            android:text="提示：服务端地址可在应用内随时修改（右上角 ⚙）。局域网使用 HTTP 明文传输，公网部署请配置 HTTPS。" />
+    </LinearLayout>
+</ScrollView>

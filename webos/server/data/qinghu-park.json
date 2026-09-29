@@ -1,0 +1,262 @@
+{
+  "venue": {
+    "id": "venue_qinghu",
+    "name": "青湖公园",
+    "nameNote": "演示·虚构场所，点位与事实仅用于程序行为验证，不是真实出游推荐",
+    "city": "成都市(演示)",
+    "timezone": "Asia/Shanghai",
+    "packVersion": "demo-2026.09.1",
+    "coverageScope": { "kind": "poi", "scopeLabel": "已收录的 12 个主要游览点" },
+    "center": { "lng": 104.065653, "lat": 30.661254, "crs": "GCJ02" },
+    "entrances": ["gate_south", "gate_east"],
+    "openWindows": [["06:00", "22:00"]],
+    "dataNote": "坐标系 GCJ02(演示标注)；步道几何为简化折线，仅演示用途"
+  },
+  "nodes": [
+    { "id": "gate_south", "name": "南门", "type": "entrance", "lng": 104.062, "lat": 30.659, "status": "open", "openWindows": [["06:00", "22:00"]] },
+    { "id": "gate_east", "name": "东门", "type": "entrance", "lng": 104.069307, "lat": 30.659901, "status": "open", "openWindows": [["06:00", "22:00"]] },
+    { "id": "j_c1", "name": "南路岔口", "type": "junction", "lng": 104.06461, "lat": 30.659361, "status": "open" },
+    { "id": "j_c2", "name": "东南岔口", "type": "junction", "lng": 104.066697, "lat": 30.659541, "status": "open" },
+    { "id": "j_w1", "name": "西南岔口", "type": "junction", "lng": 104.062522, "lat": 30.659901, "status": "open" },
+    { "id": "j_w2", "name": "西区岔口", "type": "junction", "lng": 104.062522, "lat": 30.661704, "status": "open" },
+    { "id": "j_w3", "name": "西北岔口", "type": "junction", "lng": 104.062522, "lat": 30.663056, "status": "open" },
+    { "id": "j_e1", "name": "东区岔口", "type": "junction", "lng": 104.068263, "lat": 30.661704, "status": "open" },
+    { "id": "poi_tower", "name": "望湖楼", "type": "poi", "lng": 104.063044, "lat": 30.660803, "status": "open" },
+    { "id": "poi_sycamore", "name": "梧桐大道", "type": "poi", "lng": 104.062522, "lat": 30.660803, "status": "open" },
+    { "id": "poi_bonsai", "name": "盆景园", "type": "poi", "lng": 104.063566, "lat": 30.662155, "status": "open" },
+    { "id": "poi_boardwalk", "name": "环湖栈道", "type": "poi", "lng": 104.064923, "lat": 30.661975, "status": "open" },
+    { "id": "poi_boat", "name": "石舫", "type": "poi", "lng": 104.065131, "lat": 30.662425, "status": "open" },
+    { "id": "poi_pine", "name": "松风亭", "type": "poi", "lng": 104.06461, "lat": 30.663507, "status": "open" },
+    { "id": "poi_bridge", "name": "观鱼桥", "type": "poi", "lng": 104.065653, "lat": 30.661254, "status": "open" },
+    { "id": "poi_island", "name": "湖心岛", "type": "poi", "lng": 104.066175, "lat": 30.662155, "status": "open" },
+    { "id": "poi_wetland", "name": "白鹭湿地", "type": "poi", "lng": 104.067741, "lat": 30.663056, "status": "open" },
+    { "id": "poi_playground", "name": "儿童乐园", "type": "poi", "lng": 104.067219, "lat": 30.659721, "status": "open" },
+    { "id": "poi_teahouse", "name": "老茶馆", "type": "poi", "lng": 104.068263, "lat": 30.660352, "status": "open" },
+    { "id": "poi_peony", "name": "牡丹园", "type": "poi", "lng": 104.068785, "lat": 30.662155, "status": "temporarily_closed", "statusEvidenceIds": ["ev_peony_closure"] }
+  ],
+  "edges": [
+    { "id": "e01", "from": "gate_south", "to": "j_w1", "lengthM": 112, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e02", "from": "gate_south", "to": "j_c1", "lengthM": 253, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e03", "from": "j_c1", "to": "j_c2", "lengthM": 201, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e04", "from": "j_c2", "to": "poi_playground", "lengthM": 54, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e05", "from": "j_c2", "to": "poi_bridge", "lengthM": 215, "walkAllowed": true, "bikeAllowed": false, "steps": 6, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e06", "from": "j_c2", "to": "poi_teahouse", "lengthM": 175, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e07", "from": "j_c2", "to": "gate_east", "lengthM": 253, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e08", "from": "j_w1", "to": "poi_sycamore", "lengthM": 100, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e09", "from": "poi_sycamore", "to": "j_w2", "lengthM": 100, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e10", "from": "j_w1", "to": "poi_tower", "lengthM": 112, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e11", "from": "poi_tower", "to": "poi_bonsai", "lengthM": 158, "walkAllowed": true, "bikeAllowed": false, "steps": null, "stepsKnown": false, "closed": false, "evidenceIds": ["ev_pack_survey"], "note": "石板小径，台阶情况未核验" },
+    { "id": "e12", "from": "j_w2", "to": "poi_bonsai", "lengthM": 112, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e13", "from": "j_w2", "to": "j_w3", "lengthM": 150, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e14", "from": "poi_bonsai", "to": "poi_boardwalk", "lengthM": 132, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e15", "from": "poi_boardwalk", "to": "poi_boat", "lengthM": 54, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e16", "from": "poi_boat", "to": "poi_pine", "lengthM": 130, "walkAllowed": true, "bikeAllowed": false, "steps": 24, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"], "note": "上坡石阶 24 级" },
+    { "id": "e17", "from": "j_w3", "to": "poi_pine", "lengthM": 206, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e18", "from": "poi_pine", "to": "poi_wetland", "lengthM": 304, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e20", "from": "poi_bridge", "to": "poi_boardwalk", "lengthM": 106, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e21", "from": "poi_bridge", "to": "poi_island", "lengthM": 112, "walkAllowed": true, "bikeAllowed": false, "steps": 4, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"], "note": "湖心岛唯一桥梁，往返必经（死胡同型重复，计入重复距离）" },
+    { "id": "e22", "from": "poi_bridge", "to": "j_e1", "lengthM": 255, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e23", "from": "j_e1", "to": "poi_wetland", "lengthM": 158, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e24", "from": "j_e1", "to": "poi_peony", "lengthM": 71, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e25", "from": "gate_east", "to": "poi_peony", "lengthM": 255, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e26", "from": "poi_teahouse", "to": "j_e1", "lengthM": 150, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": true, "closedReason": "步道维修临时封闭", "evidenceIds": ["ev_roadwork_e26"] },
+    { "id": "e27", "from": "poi_teahouse", "to": "gate_east", "lengthM": 112, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] },
+    { "id": "e28", "from": "poi_playground", "to": "poi_teahouse", "lengthM": 122, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_pack_survey"] }
+  ],
+  "pois": [
+    {
+      "id": "poi_tower", "name": "望湖楼", "entranceNode": "poi_tower",
+      "tags": ["人文", "建筑"], "indoor": true, "scenic": 0.9,
+      "dwellMinSec": 900, "dwellSec": 1200,
+      "openWindows": [["09:00", "17:00"]], "lastEntryAt": "16:30",
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_tower_hours"],
+      "guide": {
+        "summary": "湖边三层仿古楼阁，是俯瞰全湖视野最好的位置。",
+        "shortScript": "望湖楼是青湖的制高点，三层木结构楼阁。登楼可以看到湖面、湿地和对岸的梧桐大道连成一线。楼内一层有公园沿革小展，二层视野最开阔，值得停留几分钟。",
+        "detail": "望湖楼为仿古重建楼阁，木构三层，是园内主要的人文观景点。据公园管理处资料，楼名取'登楼望湖'之意。一层常设公园历史小展，二层、三层为观景平台。下午逆光较弱时湖面视野最佳。",
+        "claims": [
+          { "text": "望湖楼为三层仿古木结构楼阁", "evidenceId": "ev_tower_hours" },
+          { "text": "开放时间为 09:00-17:00，16:30 停止入楼", "evidenceId": "ev_tower_hours" }
+        ]
+      }
+    },
+    {
+      "id": "poi_sycamore", "name": "梧桐大道", "entranceNode": "poi_sycamore",
+      "tags": ["自然", "街区"], "indoor": false, "scenic": 0.7,
+      "dwellMinSec": 300, "dwellSec": 600,
+      "openWindows": [["06:00", "22:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_park_hours"],
+      "guide": {
+        "summary": "两排成年梧桐夹道的园路，遮阴效果好。",
+        "shortScript": "梧桐大道是公园西侧的主园路，两侧成年梧桐树冠相接，夏天遮阴明显。路面平整，适合放慢速度走一段。",
+        "detail": "梧桐大道位于公园西侧，是连接南门与西区的主要园路。树龄较长，冠幅大，是园内遮阴最好的路段之一，也是许多人散步的首选路线。",
+        "claims": [{ "text": "梧桐大道为公园西侧主要园路，遮阴效果好", "evidenceId": "ev_pack_survey" }]
+      }
+    },
+    {
+      "id": "poi_bonsai", "name": "盆景园", "entranceNode": "poi_bonsai",
+      "tags": ["人文"], "indoor": true, "scenic": 0.6,
+      "dwellMinSec": 600, "dwellSec": 900,
+      "openWindows": [["09:00", "12:00"], ["13:30", "17:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_bonsai_hours"],
+      "guide": {
+        "summary": "川派盆景小园，中午闭园休息，注意安排时间。",
+        "shortScript": "盆景园展示川派盆景，以曲折虬枝和山石组合见长。园子不大但密度高，慢慢看需要一刻钟左右。注意中午 12 点到下午 1 点半闭园。",
+        "detail": "盆景园集中展示川派盆景风格，讲究'虬曲多姿、悬根露爪'。园内按树种分区陈列，部分作品有年代说明牌。中午有闭园休息时段，请按开放窗口安排到访。",
+        "claims": [{ "text": "盆景园开放时间为 09:00-12:00 与 13:30-17:00 两段", "evidenceId": "ev_bonsai_hours" }]
+      }
+    },
+    {
+      "id": "poi_boardwalk", "name": "环湖栈道", "entranceNode": "poi_boardwalk",
+      "tags": ["自然"], "indoor": false, "scenic": 0.85,
+      "dwellMinSec": 600, "dwellSec": 900,
+      "openWindows": [["06:00", "22:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_park_hours"],
+      "guide": {
+        "summary": "贴着湖岸线的木栈道，是看水鸟和倒影的路段。",
+        "shortScript": "环湖栈道贴着西岸水面铺设，离水很近。清晨和傍晚常见水鸟在附近活动，走慢一点更容易看到。栈道连接石舫与观鱼桥方向。",
+        "detail": "环湖栈道沿湖西岸布置，视野开阔，可同时看到湖面、石舫与对岸湿地。栈道平整无台阶，适合各类步行节奏。",
+        "claims": [{ "text": "环湖栈道沿湖西岸布置，无台阶", "evidenceId": "ev_pack_survey" }]
+      }
+    },
+    {
+      "id": "poi_boat", "name": "石舫", "entranceNode": "poi_boat",
+      "tags": ["建筑", "人文"], "indoor": false, "scenic": 0.65,
+      "dwellMinSec": 300, "dwellSec": 600,
+      "openWindows": [["06:00", "22:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_park_hours"],
+      "guide": {
+        "summary": "岸边一座石造画舫，是公园的老地标之一。",
+        "shortScript": "石舫是一座建在岸边的石造船形建筑，'旱船不渡人'，是传统园林里常见的造景手法。从栈道方向看舫身与水面倒影连在一起，是最经典的取景角度。",
+        "detail": "石舫为石构船形景观建筑，属于传统园林'旱舫'造景。舫体不可登临，以外观观赏为主。与环湖栈道相邻，可顺路游览。",
+        "claims": [{ "text": "石舫为石造景观建筑，不可登临", "evidenceId": "ev_pack_survey" }]
+      }
+    },
+    {
+      "id": "poi_pine", "name": "松风亭", "entranceNode": "poi_pine",
+      "tags": ["自然"], "indoor": false, "scenic": 0.6,
+      "dwellMinSec": 300, "dwellSec": 600,
+      "openWindows": [["06:00", "22:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_park_hours"],
+      "guide": {
+        "summary": "地势最高处的凉亭，注意从石舫方向过来有 24 级石阶。",
+        "shortScript": "松风亭在园区北侧高地，周围松树环绕，风大时松涛明显，因此得名。这里是园内地势最高的休息点，适合坐下来吹吹风。从石舫方向上来有 24 级石阶，走西侧岔口方向则没有台阶。",
+        "detail": "松风亭位于园区北部高地，为传统攒尖顶凉亭。亭周松林成片。两条到达路径中，石舫方向有 24 级石阶（已核验），西侧岔口方向为平缓坡道。",
+        "claims": [
+          { "text": "石舫至松风亭路段有 24 级石阶", "evidenceId": "ev_pack_survey" },
+          { "text": "西侧岔口至松风亭为平缓坡道", "evidenceId": "ev_pack_survey" }
+        ]
+      }
+    },
+    {
+      "id": "poi_bridge", "name": "观鱼桥", "entranceNode": "poi_bridge",
+      "tags": ["自然"], "indoor": false, "scenic": 0.7,
+      "dwellMinSec": 300, "dwellSec": 600,
+      "openWindows": [["06:00", "22:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_park_hours"],
+      "guide": {
+        "summary": "通往湖心岛的唯一桥梁，桥上常有人喂鱼。",
+        "shortScript": "观鱼桥横跨湖面窄处，是通往湖心岛的唯一通道。桥下鱼群密集，常有人驻足投喂。请注意：去湖心岛游览后需经同一座桥返回。",
+        "detail": "观鱼桥为石拱桥，是湖心岛与主园区之间的唯一连接（死胡同型路段）。前往湖心岛的行程会产生必要的重复路段，这是路网结构决定的，不属于规划失误。",
+        "claims": [{ "text": "观鱼桥是湖心岛唯一桥梁，往返必经", "evidenceId": "ev_pack_survey" }]
+      }
+    },
+    {
+      "id": "poi_island", "name": "湖心岛", "entranceNode": "poi_island",
+      "tags": ["自然"], "indoor": false, "scenic": 0.75,
+      "dwellMinSec": 600, "dwellSec": 900,
+      "openWindows": [["06:00", "22:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_park_hours"],
+      "guide": {
+        "summary": "湖中绿岛，环步道一圈约十分钟，视野四周临水。",
+        "shortScript": "湖心岛四面环水，岛上有一条环形步道，慢慢走一圈十来分钟。岛中央有一片开阔草地，是看全湖的好位置。本地流传着一个关于湖心岛的传说：相传岛上曾有一座小庙，夜渔的人把灯光当作指引——这只是地方传说，没有史料记载。",
+        "detail": "湖心岛通过观鱼桥与主园区相连。岛上环步道平缓，草地开阔。关于'湖心岛小庙引路灯'的说法属于地方传说（已标注），未见于正式史料，讲述时请注意区分。",
+        "claims": [
+          { "text": "湖心岛经观鱼桥与主园区相连，为唯一通道", "evidenceId": "ev_pack_survey" },
+          { "text": "'湖心岛小庙引路灯'为地方传说，无史料记载", "evidenceId": "ev_island_legend", "legend": true }
+        ]
+      }
+    },
+    {
+      "id": "poi_wetland", "name": "白鹭湿地", "entranceNode": "poi_wetland",
+      "tags": ["自然", "公园湿地"], "indoor": false, "scenic": 0.95,
+      "dwellMinSec": 900, "dwellSec": 1200,
+      "openWindows": [["08:00", "18:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_wetland_hours"],
+      "guide": {
+        "summary": "园区东北角的浅水湿地，是观察鹭鸟的主要区域。",
+        "shortScript": "白鹭湿地是公园东北角的一片浅水区，设有观鸟木平台和解说牌。清晨与傍晚鹭鸟活动最频繁。观鸟时请保持安静、不要越过护栏，给鸟留出没的距离。",
+        "detail": "白鹭湿地为园内保留的浅水湿地区域，设有观鸟平台与科普解说牌。开放时间为 08:00-18:00，较公园大门关闭更早，安排行程时请注意。观鸟以远观为主，避免干扰鸟类活动。",
+        "claims": [{ "text": "白鹭湿地开放时间为 08:00-18:00", "evidenceId": "ev_wetland_hours" }]
+      }
+    },
+    {
+      "id": "poi_playground", "name": "儿童乐园", "entranceNode": "poi_playground",
+      "tags": ["街区"], "indoor": false, "scenic": 0.4,
+      "dwellMinSec": 600, "dwellSec": 900,
+      "openWindows": [["06:00", "22:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_park_hours"],
+      "guide": {
+        "summary": "靠近东南门的儿童活动区，有沙坑与组合滑梯。",
+        "shortScript": "儿童乐园在公园东南角，有沙坑、滑梯和攀爬架，地面为塑胶铺装。带孩子的家庭可以在这里安排较长的停留。",
+        "detail": "儿童乐园为开放式儿童活动场地，设施以组合滑梯、沙坑为主。场地无遮阴棚，正午日照较强时段注意防晒。",
+        "claims": [{ "text": "儿童乐园为开放式活动场地", "evidenceId": "ev_pack_survey" }]
+      }
+    },
+    {
+      "id": "poi_teahouse", "name": "老茶馆", "entranceNode": "poi_teahouse",
+      "tags": ["美食", "人文"], "indoor": true, "scenic": 0.55,
+      "dwellMinSec": 900, "dwellSec": 1200,
+      "openWindows": [["09:00", "21:00"]],
+      "ticketCny": null, "ticketKnown": false, "costNote": "消费价格未核验，按实际消费",
+      "reservation": "none",
+      "hoursEvidenceIds": ["ev_teahouse_hours"],
+      "guide": {
+        "summary": "东门内的老式茶馆，竹椅盖碗茶，适合歇脚。",
+        "shortScript": "老茶馆是公园里的传统茶馆，竹椅、盖碗茶、摆龙门阵，是体验本地休闲方式的地方。走累了在这里坐半小时很合适。消费价格我们没有核验，以店内公示为准。",
+        "detail": "老茶馆为传统风格茶馆，提供盖碗茶与简餐。营业时间为 09:00-21:00。价格信息未核验（已标注未知），如你的行程有严格预算约束，请以店内实际公示为准。",
+        "claims": [
+          { "text": "老茶馆营业时间为 09:00-21:00", "evidenceId": "ev_teahouse_hours" },
+          { "text": "茶馆消费价格未核验", "evidenceId": "ev_teahouse_cost_unknown" }
+        ]
+      }
+    },
+    {
+      "id": "poi_peony", "name": "牡丹园", "entranceNode": "poi_peony",
+      "tags": ["自然"], "indoor": false, "scenic": 0.7,
+      "dwellMinSec": 600, "dwellSec": 900,
+      "openWindows": [["06:00", "22:00"]],
+      "closedToday": true, "closedReason": "园区养护，临时闭园",
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none",
+      "hoursEvidenceIds": ["ev_peony_closure"],
+      "guide": {
+        "summary": "季节性花圃，当前因养护临时闭园。",
+        "shortScript": "牡丹园是季节性观赏花圃。根据园方公告，当前因养护临时闭园，具体恢复时间以现场公告为准。",
+        "detail": "牡丹园当前处于临时闭园状态（园方养护公告）。临时闭馆公告的优先级高于常规开放时段，系统已按公告处理该点位。",
+        "claims": [{ "text": "牡丹园因养护临时闭园", "evidenceId": "ev_peony_closure" }]
+      }
+    }
+  ],
+  "evidence": [
+    { "id": "ev_pack_survey", "sourceTitle": "青湖公园场所包人工巡查记录（演示）", "sourceUrl": "fixture://venue-packs/qinghu/survey-2026-09-15", "retrievedAt": "2026-09-15T10:00:00+08:00", "effectiveFrom": "2026-09-15", "expiresAt": null, "license": "自有采集(演示)", "reviewStatus": "reviewed" },
+    { "id": "ev_park_hours", "sourceTitle": "青湖公园开放公告（演示）", "sourceUrl": "fixture://venue-packs/qinghu/notice-hours", "retrievedAt": "2026-09-10T09:00:00+08:00", "effectiveFrom": "2026-09-01", "expiresAt": null, "license": "官方公告(演示)", "reviewStatus": "reviewed" },
+    { "id": "ev_tower_hours", "sourceTitle": "望湖楼开放管理说明（演示）", "sourceUrl": "fixture://venue-packs/qinghu/tower-hours", "retrievedAt": "2026-09-10T09:00:00+08:00", "effectiveFrom": "2026-09-01", "expiresAt": null, "license": "官方公告(演示)", "reviewStatus": "reviewed" },
+    { "id": "ev_bonsai_hours", "sourceTitle": "盆景园开放公告（演示）", "sourceUrl": "fixture://venue-packs/qinghu/bonsai-hours", "retrievedAt": "2026-09-10T09:00:00+08:00", "effectiveFrom": "2026-09-01", "expiresAt": null, "license": "官方公告(演示)", "reviewStatus": "reviewed" },
+    { "id": "ev_wetland_hours", "sourceTitle": "白鹭湿地保护管理公告（演示）", "sourceUrl": "fixture://venue-packs/qinghu/wetland-notice", "retrievedAt": "2026-09-10T09:00:00+08:00", "effectiveFrom": "2026-09-01", "expiresAt": null, "license": "官方公告(演示)", "reviewStatus": "reviewed" },
+    { "id": "ev_teahouse_hours", "sourceTitle": "老茶馆营业时间公示（演示）", "sourceUrl": "fixture://venue-packs/qinghu/teahouse-hours", "retrievedAt": "2026-09-12T09:00:00+08:00", "effectiveFrom": "2026-09-01", "expiresAt": null, "license": "商户公示(演示)", "reviewStatus": "reviewed" },
+    { "id": "ev_teahouse_cost_unknown", "sourceTitle": "价格信息未核验说明", "sourceUrl": "fixture://venue-packs/qinghu/teahouse-cost", "retrievedAt": "2026-09-12T09:00:00+08:00", "effectiveFrom": null, "expiresAt": null, "license": "内部标注", "reviewStatus": "reviewed" },
+    { "id": "ev_peony_closure", "sourceTitle": "牡丹园养护临时闭园公告（演示）", "sourceUrl": "fixture://venue-packs/qinghu/peony-closure", "retrievedAt": "2026-09-20T08:00:00+08:00", "effectiveFrom": "2026-09-20", "expiresAt": "2026-09-27", "license": "官方公告(演示)", "reviewStatus": "reviewed", "note": "临时闭馆公告覆盖常规开放时段" },
+    { "id": "ev_roadwork_e26", "sourceTitle": "东区步道维修封闭通告（演示）", "sourceUrl": "fixture://venue-packs/qinghu/roadwork-e26", "retrievedAt": "2026-09-19T08:00:00+08:00", "effectiveFrom": "2026-09-19", "expiresAt": "2026-09-26", "license": "官方公告(演示)", "reviewStatus": "reviewed" },
+    { "id": "ev_island_legend", "sourceTitle": "本地口述传说采集记录（演示）", "sourceUrl": "fixture://venue-packs/qinghu/island-legend", "retrievedAt": "2026-09-05T10:00:00+08:00", "effectiveFrom": null, "expiresAt": null, "license": "口述采集(演示)", "reviewStatus": "reviewed", "note": "传说类内容，仅作文化背景，不作为史实" }
+  ]
+}

@@ -1,0 +1,30 @@
+# 用法：docker compose -f deploy/docker-compose.yml up -d
+# 密钥通过同级 .env 文件或环境变量传入（不要把密钥写进本文件提交到仓库）
+services:
+  smart-tour:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: smart-tour:0.1.0
+    container_name: smart-tour
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      NODE_ENV: production
+      AMAP_WS_KEY: ${AMAP_WS_KEY:-}
+      AMAP_JS_KEY: ${AMAP_JS_KEY:-}
+      AMAP_JS_SECRET: ${AMAP_JS_SECRET:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-deepseek-chat}
+    volumes:
+      # 运行时数据（行程/路线/反馈）必须持久化
+      - ../data:/app/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/v1/config').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

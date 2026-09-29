@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  服务端地址由用户在应用内填写（可能是局域网自建服务），因此放行明文 HTTP。
+  公网部署请在 SetupActivity 提示中改用 HTTPS；如需收紧，可在此改为按域名白名单。
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

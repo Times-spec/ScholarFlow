@@ -1,0 +1,29 @@
+# ===== 密钥与隐私（绝不入库）=====
+webos/config.json
+webos/data/admin-token.txt
+webos/data/db.json
+webos/data/db.json.tmp
+webos/android/keystore/*.jks
+webos/android/local.properties
+
+# ===== 运行时产物 =====
+webos/dist/
+webos/.workbuddy/
+webos/logs/
+*.log
+
+# ===== Android 构建产物 =====
+webos/android/.gradle/
+webos/android/build/
+webos/android/app/build/
+
+# ===== 历史版本与早期草稿（git 历史即版本管理，无需旧副本）=====
+历史version/
+想法/
+
+# ===== 工作区工具文件 =====
+.zcodeignore
+
+# ===== 系统杂项 =====
+.DS_Store
+Thumbs.db

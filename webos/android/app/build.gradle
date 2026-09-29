@@ -1,0 +1,41 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'cn.suixing.tour'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "cn.suixing.tour"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "0.1.0"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../keystore/suixing.jks")
+            storePassword "suixing2026"
+            keyAlias "suixing"
+            keyPassword "suixing2026"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint { abortOnError false }
+}

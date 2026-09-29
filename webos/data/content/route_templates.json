@@ -1,0 +1,619 @@
+{
+  "version": "1.0.0",
+  "reviewStatus": "library_v1",
+  "reviewNote": "路线模板库：编辑基于内容库（公开资料整理，未实地核验）精选固化；热度=编辑初始值+真实使用计数，用一条涨一条",
+  "templates": [
+    {
+      "id": "t_xihu_classic",
+      "name": "西湖经典半日环湖",
+      "cityId": "hangzhou",
+      "venueId": "v_xihu",
+      "scene": "venue",
+      "durationSec": 14400,
+      "themeTags": [
+        "自然",
+        "人文",
+        "经典"
+      ],
+      "summary": "断桥进、苏堤串、湖心看，半天走完西湖最经典的一面",
+      "stops": [
+        {
+          "name": "断桥残雪",
+          "brief": "白堤起点，远眺保俶塔"
+        },
+        {
+          "name": "苏堤",
+          "brief": "两公里长堤，六桥烟柳"
+        },
+        {
+          "name": "三潭印月",
+          "brief": "湖心三塔，一元纸币取景地"
+        },
+        {
+          "name": "花港观鱼",
+          "brief": "红鱼池与牡丹园收尾"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "自然",
+          "人文"
+        ],
+        "endpointMode": "return_to_origin"
+      },
+      "blurb": "第一次来西湖的人九成走这条骨架；体力一般可在苏堤坐电瓶车衔接",
+      "heatInit": 186,
+      "heat": 191
+    },
+    {
+      "id": "t_gugong_deep",
+      "name": "故宫中轴+珍宝馆深度半日",
+      "cityId": "beijing",
+      "venueId": "v_gugong",
+      "scene": "venue",
+      "durationSec": 14400,
+      "themeTags": [
+        "人文",
+        "建筑",
+        "经典"
+      ],
+      "summary": "午门进沿中轴到御花园，岔开宁寿宫看珍宝馆，神武门出",
+      "stops": [
+        {
+          "name": "午门",
+          "brief": "检票入院，先看城台形制"
+        },
+        {
+          "name": "太和殿",
+          "brief": "中轴主殿，人最多宜早到"
+        },
+        {
+          "name": "乾清宫",
+          "brief": "内廷正殿，'正大光明'匾"
+        },
+        {
+          "name": "珍宝馆（宁寿宫区）",
+          "brief": "需另购票，珠宝钟表精品"
+        },
+        {
+          "name": "御花园",
+          "brief": "钦安殿与古柏，出神武门前歇脚"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "人文",
+          "建筑"
+        ],
+        "endpointMode": "fixed"
+      },
+      "blurb": "故宫必须提前实名预约；中轴人挤人时先逛两翼，下午回中轴",
+      "heatInit": 172,
+      "heat": 172
+    },
+    {
+      "id": "t_chengdu_teahouse",
+      "name": "成都慢半日：茶馆+巷子+三国",
+      "cityId": "chengdu",
+      "scene": "wander",
+      "durationSec": 14400,
+      "themeTags": [
+        "美食",
+        "街区",
+        "人文"
+      ],
+      "summary": "人民公园喝碗盖碗茶，穿过宽窄巷子，收在武侯祠锦里的红墙下",
+      "stops": [
+        {
+          "name": "鹤鸣茶社（人民公园）",
+          "brief": "百年茶馆，掏耳朵体验"
+        },
+        {
+          "name": "宽巷子·窄巷子",
+          "brief": "清代川西民居街区"
+        },
+        {
+          "name": "武侯祠",
+          "brief": "君臣合祀，红墙竹影出片"
+        },
+        {
+          "name": "锦里古街",
+          "brief": "傍晚灯火最好逛，小吃收尾"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "人文",
+          "美食",
+          "街区"
+        ],
+        "endpointMode": "flexible"
+      },
+      "blurb": "最'成都'的半天：把茶馆、巷子、三国一次集齐，地铁+步行全搞定",
+      "heatInit": 158,
+      "heat": 159
+    },
+    {
+      "id": "t_chongqing_night",
+      "name": "重庆魔幻夜景半晚",
+      "cityId": "chongqing",
+      "scene": "wander",
+      "durationSec": 10800,
+      "themeTags": [
+        "夜景",
+        "美食",
+        "都市观光"
+      ],
+      "summary": "傍晚出发：解放碑→八一路小吃→千厮门大桥看洪崖洞全景亮灯",
+      "stops": [
+        {
+          "name": "解放碑",
+          "brief": "商圈原点，先逛拍"
+        },
+        {
+          "name": "八一好吃街",
+          "brief": "酸辣粉、山城汤圆垫肚子"
+        },
+        {
+          "name": "千厮门大桥",
+          "brief": "拍洪崖洞吊脚楼夜景的最佳机位"
+        },
+        {
+          "name": "洪崖洞吊脚楼群",
+          "brief": "亮灯后下到滨江路仰拍"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "美食",
+          "街区"
+        ],
+        "endpointMode": "return_to_origin"
+      },
+      "blurb": "日落后一小时是洪崖洞灯光最亮的窗口期，注意错峰",
+      "heatInit": 143,
+      "heat": 143
+    },
+    {
+      "id": "t_panda_family",
+      "name": "熊猫基地亲子半日",
+      "cityId": "chengdu",
+      "venueId": "v_pandabase",
+      "scene": "venue",
+      "durationSec": 10800,
+      "themeTags": [
+        "亲子",
+        "自然",
+        "科普"
+      ],
+      "summary": "直奔月亮产房看幼崽，再沿别墅区看成年熊猫，天鹅湖收尾",
+      "stops": [
+        {
+          "name": "月亮产房",
+          "brief": "熊猫幼崽，早上去最活跃"
+        },
+        {
+          "name": "成年大熊猫别墅",
+          "brief": "进食与玩耍主场面"
+        },
+        {
+          "name": "太阳产房",
+          "brief": "补看幼崽批次"
+        },
+        {
+          "name": "天鹅湖",
+          "brief": "园区深处，人少歇脚"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "自然"
+        ],
+        "endpointMode": "return_to_origin"
+      },
+      "blurb": "带娃首选：开园即到直奔产房，上午熊猫最精神",
+      "heatInit": 137,
+      "heat": 137
+    },
+    {
+      "id": "t_beijing_hutong",
+      "name": "北京胡同+北海半日闲",
+      "cityId": "beijing",
+      "scene": "wander",
+      "durationSec": 14400,
+      "themeTags": [
+        "街区",
+        "人文",
+        "经典"
+      ],
+      "summary": "南锣鼓巷进，穿帽儿胡同，银锭桥看后海，北海白塔下收尾",
+      "stops": [
+        {
+          "name": "南锣主街",
+          "brief": "元代里坊格局，主街+支巷"
+        },
+        {
+          "name": "帽儿胡同",
+          "brief": "可园与旧宅门，安静段"
+        },
+        {
+          "name": "银锭桥",
+          "brief": "银锭观山，后海起点"
+        },
+        {
+          "name": "烟袋斜街",
+          "brief": "斜街小店，通往地安门外"
+        },
+        {
+          "name": "北海公园·永安寺白塔",
+          "brief": "琼华岛白塔，湖上泛舟可选"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "街区",
+          "人文"
+        ],
+        "endpointMode": "flexible"
+      },
+      "blurb": "老北京味道浓度最高的一条线，主街人多就往两侧支巷钻",
+      "heatInit": 121,
+      "heat": 121
+    },
+    {
+      "id": "t_suzhou_garden",
+      "name": "苏州一日：园林+水巷",
+      "cityId": "suzhou",
+      "scene": "wander",
+      "durationSec": 28800,
+      "themeTags": [
+        "建筑",
+        "人文",
+        "经典"
+      ],
+      "summary": "上午拙政园看造园，午后平江路摇橹船，评弹茶馆听一段",
+      "stops": [
+        {
+          "name": "拙政园·远香堂",
+          "brief": "主厅四面观景，造园核心"
+        },
+        {
+          "name": "小飞虹",
+          "brief": "园林少见的廊桥"
+        },
+        {
+          "name": "与谁同坐轩",
+          "brief": "扇形轩，借景经典"
+        },
+        {
+          "name": "平江主街",
+          "brief": "水陆并行、河街相邻"
+        },
+        {
+          "name": "评弹茶馆",
+          "brief": "一杯茶听一场评弹"
+        },
+        {
+          "name": "丁香巷",
+          "brief": "雨巷意象的窄巷"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "人文",
+          "建筑",
+          "街区"
+        ],
+        "endpointMode": "return_to_origin"
+      },
+      "blurb": "园林早去人少；拙政园需预约，平江路傍晚最有味道",
+      "heatInit": 116,
+      "heat": 116
+    },
+    {
+      "id": "t_nanjing_qinhuai",
+      "name": "夫子庙-秦淮河夜游",
+      "cityId": "nanjing",
+      "venueId": "v_fuzimiao",
+      "scene": "venue",
+      "durationSec": 10800,
+      "themeTags": [
+        "夜景",
+        "人文",
+        "美食"
+      ],
+      "summary": "牌坊进、贡院看、乌衣巷怀古，画舫码头夜游秦淮",
+      "stops": [
+        {
+          "name": "天下文枢牌坊",
+          "brief": "街区入口，灯会主景"
+        },
+        {
+          "name": "江南贡院",
+          "brief": "科举博物馆，地下展陈"
+        },
+        {
+          "name": "乌衣巷",
+          "brief": "刘禹锡诗意所在"
+        },
+        {
+          "name": "秦淮画舫码头",
+          "brief": "夜游船看两岸灯火"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "人文",
+          "美食"
+        ],
+        "endpointMode": "return_to_origin"
+      },
+      "blurb": "白天逛文脉、晚上看灯火，一趟顶两趟；画舫票现场买即可",
+      "heatInit": 109,
+      "heat": 109
+    },
+    {
+      "id": "t_gulangyu_day",
+      "name": "鼓浪屿一日慢走",
+      "cityId": "xiamen",
+      "venueId": "v_gulangyu",
+      "scene": "venue",
+      "durationSec": 28800,
+      "themeTags": [
+        "自然",
+        "人文",
+        "经典"
+      ],
+      "summary": "日光岩登顶看全岛，菽庄花园听涛，龙头路小吃收尾",
+      "stops": [
+        {
+          "name": "日光岩",
+          "brief": "全岛制高点，早去避晒"
+        },
+        {
+          "name": "菽庄花园",
+          "brief": "四十四桥入海，钢琴博物馆"
+        },
+        {
+          "name": "风琴博物馆（八卦楼）",
+          "brief": "穹顶老建筑与管风琴"
+        },
+        {
+          "name": "龙头路商业街",
+          "brief": "馅饼、鱼丸、沙茶面"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "自然",
+          "人文"
+        ],
+        "endpointMode": "return_to_origin"
+      },
+      "blurb": "轮渡需提前购票；岛上无车，全程步行，穿舒适的鞋",
+      "heatInit": 98,
+      "heat": 98
+    },
+    {
+      "id": "t_xian_evening",
+      "name": "西安大唐夜色半晚",
+      "cityId": "xian",
+      "scene": "wander",
+      "durationSec": 10800,
+      "themeTags": [
+        "夜景",
+        "人文",
+        "美食"
+      ],
+      "summary": "大雁塔看喷泉，大唐不夜城走一公里灯火，收在回民街夜宵",
+      "stops": [
+        {
+          "name": "大雁塔",
+          "brief": "玄奘译经地，南广场拍全景"
+        },
+        {
+          "name": "北广场音乐喷泉",
+          "brief": "亚洲最大喷泉群，查好场次"
+        },
+        {
+          "name": "大唐不夜城步行街",
+          "brief": "唐风灯火+街头演艺"
+        },
+        {
+          "name": "北院门主街（回民街）",
+          "brief": "夜宵：泡馍、烤肉、镜糕"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "人文",
+          "美食"
+        ],
+        "endpointMode": "return_to_origin"
+      },
+      "blurb": "喷泉场次以现场公示为准；不夜城人流量极大，注意随身物品",
+      "heatInit": 96,
+      "heat": 96
+    },
+    {
+      "id": "t_zhujiajiao_half",
+      "name": "朱家角水乡半日",
+      "cityId": "shanghai",
+      "venueId": "v_zhujiajiao",
+      "scene": "venue",
+      "durationSec": 10800,
+      "themeTags": [
+        "街区",
+        "水乡古镇",
+        "人文"
+      ],
+      "summary": "放生桥跨漕港河，北大街吃一圈，课植园看园林，摇橹船收尾",
+      "stops": [
+        {
+          "name": "放生桥",
+          "brief": "沪上最大石拱桥，桥上看水乡全景"
+        },
+        {
+          "name": "北大街",
+          "brief": "一线天窄街，扎肉与粽子香"
+        },
+        {
+          "name": "课植园",
+          "brief": "'课读之余不忘耕植'的庄园园林"
+        },
+        {
+          "name": "摇橹船码头",
+          "brief": "船娘摇橹穿桥洞"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "街区",
+          "人文"
+        ],
+        "endpointMode": "return_to_origin"
+      },
+      "blurb": "上海市区一小时可达的古镇，工作日去几乎包场",
+      "heatInit": 87,
+      "heat": 87
+    },
+    {
+      "id": "t_hangzhou_zen",
+      "name": "灵隐祈福半日",
+      "cityId": "hangzhou",
+      "venueId": "v_lingyin",
+      "scene": "venue",
+      "durationSec": 10800,
+      "themeTags": [
+        "人文",
+        "建筑",
+        "石窟造像"
+      ],
+      "summary": "飞来峰看造像，冷泉亭歇脚，进灵隐寺上香，理公塔收尾",
+      "stops": [
+        {
+          "name": "飞来峰造像",
+          "brief": "五代至元代石窟造像群"
+        },
+        {
+          "name": "冷泉亭",
+          "brief": "溪畔古亭，苏东坡旧游"
+        },
+        {
+          "name": "大雄宝殿",
+          "brief": "24.8 米释迦牟尼像"
+        },
+        {
+          "name": "理公塔",
+          "brief": "开山祖师墓塔，溪涧尽头"
+        }
+      ],
+      "draft": {
+        "objective": "highlights",
+        "interests": [
+          "人文",
+          "建筑"
+        ],
+        "endpointMode": "return_to_origin"
+      },
+      "blurb": "先买飞来峰门票才能进灵隐寺，香烛寺内可领",
+      "heatInit": 84,
+      "heat": 84
+    },
+    {
+      "id": "t_beijing_2days",
+      "name": "北京经典两日模板",
+      "cityId": "beijing",
+      "scene": "itinerary",
+      "durationSec": 57600,
+      "themeTags": [
+        "经典",
+        "人文",
+        "多日行程"
+      ],
+      "summary": "D1 皇城中轴（故宫+北海），D2 天坛+胡同街区，节奏适中",
+      "stops": [
+        {
+          "name": "D1 故宫博物院",
+          "brief": "全天主游，提前 7 天预约"
+        },
+        {
+          "name": "D1 北海公园",
+          "brief": "傍晚白塔+湖景收尾"
+        },
+        {
+          "name": "D2 天坛公园",
+          "brief": "上午祈年殿，回音壁"
+        },
+        {
+          "name": "D2 南锣鼓巷·什刹海",
+          "brief": "下午胡同+晚上后海"
+        }
+      ],
+      "draft": {
+        "days": 2,
+        "interests": [
+          "人文",
+          "建筑"
+        ],
+        "pace": "normal"
+      },
+      "blurb": "在『发现→城市行程』基础上固化的大众选择，进入后可改天数与兴趣",
+      "heatInit": 132,
+      "heat": 132
+    },
+    {
+      "id": "t_chengdu_2days",
+      "name": "成都松弛感两日模板",
+      "cityId": "chengdu",
+      "scene": "itinerary",
+      "durationSec": 57600,
+      "themeTags": [
+        "美食",
+        "亲子",
+        "多日行程"
+      ],
+      "summary": "D1 熊猫基地+宽窄巷子，D2 人民公园+武侯祠锦里，全程不赶",
+      "stops": [
+        {
+          "name": "D1 大熊猫繁育研究基地",
+          "brief": "开园直奔月亮产房"
+        },
+        {
+          "name": "D1 宽窄巷子",
+          "brief": "下午茶+掏耳朵"
+        },
+        {
+          "name": "D2 人民公园",
+          "brief": "鹤鸣茶社早茶"
+        },
+        {
+          "name": "D2 武侯祠·锦里",
+          "brief": "红墙竹影+夜市小吃"
+        }
+      ],
+      "draft": {
+        "days": 2,
+        "interests": [
+          "美食",
+          "自然"
+        ],
+        "pace": "easy"
+      },
+      "blurb": "把'慢'当目的的两日：每天只排两个主点，留白给茶馆",
+      "heatInit": 118,
+      "heat": 118
+    }
+  ]
+}

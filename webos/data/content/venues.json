@@ -1,0 +1,915 @@
+{
+  "version": "1.0.0",
+  "reviewStatus": "library_v1",
+  "reviewNote": "内容库 v1：依据公开资料整理，未实地核验；坐标为内容库近似坐标（GCJ02，仅供行程示意）；票价/开放时间以官方与现场公示为准",
+  "venues": [
+    {
+      "id": "v_gugong", "cityId": "beijing", "name": "故宫博物院", "en": "The Palace Museum",
+      "kind": "景区", "level": "5A", "worldHeritage": true,
+      "tags": ["人文", "建筑", "世界遗产"],
+      "rating": 4.9, "heat": 98,
+      "summary": "明清两代皇宫「紫禁城」，世界上现存规模最大、保存最完整的木结构宫殿建筑群，现存文物 186 万余件。中轴三大殿气势恢宏，东西六宫深藏故事，角楼与珍宝馆不容错过。需提前在官方渠道实名预约。",
+      "highlights": ["太和殿", "乾清宫", "御花园", "角楼", "珍宝馆"],
+      "ticket": { "referencePriceCny": 60, "known": false, "note": "旺季/淡季与珍宝馆、钟表馆另计，需实名预约，以官方公示为准" },
+      "openHours": { "text": "旺季约 08:30-17:00，淡季至 16:30；周一闭馆（法定节假日除外）", "known": false },
+      "bestSeason": "四季皆宜；雪后故宫尤为难得",
+      "suggestedHours": 4, "size": "large", "crowd": "极高",
+      "coord": { "lng": 116.397, "lat": 39.918 },
+      "pois": [
+        { "name": "午门", "type": "门区", "brief": "故宫正门，游客参观入口，居于中轴线最南端" },
+        { "name": "太和殿", "type": "看点", "mustSee": true, "n": "n_gugong_taihedian", "brief": "俗称金銮殿，紫禁城中等级最高的宫殿" },
+        { "name": "乾清宫", "type": "看点", "n": "n_gugong_qianqinggong", "brief": "内廷正殿，明清皇帝的寝宫与日常理政处" },
+        { "name": "御花园", "type": "看点", "brief": "中轴北端的宫廷花园，古柏奇石亭台错落" },
+        { "name": "神武门", "type": "门区", "brief": "故宫北门，参观出口，可登城墙远眺" },
+        { "name": "角楼", "type": "看点", "mustSee": true, "n": "n_gugong_jiaolou", "brief": "城墙四角的九梁十八柱七十二条脊精巧角楼" },
+        { "name": "珍宝馆（宁寿宫区）", "type": "看点", "mustSee": true, "n": "n_gugong_zhenbaoguan", "brief": "珠宝金银玉石珍藏，九龙壁即在此区" }
+      ]
+    },
+    {
+      "id": "v_yiheyuan", "cityId": "beijing", "name": "颐和园", "en": "Summer Palace",
+      "kind": "园林", "level": "5A", "worldHeritage": true,
+      "tags": ["人文", "建筑", "自然"],
+      "rating": 4.8, "heat": 92,
+      "summary": "中国现存规模最大的皇家园林，以昆明湖、万寿山为基址，借西湖景致造园。728 米长廊彩绘万余幅，佛香阁踞山面湖，十七孔桥冬日「金光穿洞」名动京城。",
+      "highlights": ["长廊", "佛香阁", "昆明湖", "十七孔桥", "苏州街"],
+      "ticket": { "referencePriceCny": 30, "known": false, "note": "大门票与联票（含佛香阁等园中园）价格不同，以官方公示为准" },
+      "openHours": { "text": "旺季约 06:30-18:00，大门早开晚闭，园中园另有时间", "known": false },
+      "bestSeason": "春夏秋皆宜；冬至前后有十七孔桥金光穿洞",
+      "suggestedHours": 4, "size": "large", "crowd": "高",
+      "coord": { "lng": 116.275, "lat": 39.999 },
+      "pois": [
+        { "name": "东宫门", "type": "门区", "brief": "正门，仁寿殿在前，是官方参观起点" },
+        { "name": "长廊", "type": "看点", "mustSee": true, "n": "n_yihe_changlang", "brief": "728 米彩绘长廊，每根梁枋都有故事" },
+        { "name": "佛香阁", "type": "看点", "mustSee": true, "n": "n_yihe_foxiangge", "brief": "万寿山前山制高点，八面三层四重檐" },
+        { "name": "昆明湖", "type": "看点", "brief": "占全园四分之三的水面，可乘船至南湖岛" },
+        { "name": "十七孔桥", "type": "看点", "mustSee": true, "n": "n_yihe_shiqikong", "brief": "连接东堤与南湖岛的联拱大石桥" },
+        { "name": "苏州街", "type": "看点", "brief": "仿江南水乡的皇家买卖街，夹岸店铺临水" }
+      ]
+    },
+    {
+      "id": "v_tiantan", "cityId": "beijing", "name": "天坛公园", "en": "Temple of Heaven",
+      "kind": "景区", "level": "5A", "worldHeritage": true,
+      "tags": ["人文", "建筑", "世界遗产"],
+      "rating": 4.8, "heat": 88,
+      "summary": "明清两代皇帝祭天祈谷之所，是中国现存最大的古代祭祀建筑群。祈年殿三重檐攒尖顶不用大梁长檩，回音壁与圜丘藏着声学奇迹，古柏林里清晨满是晨练的老北京。",
+      "highlights": ["祈年殿", "回音壁", "圜丘", "皇穹宇", "古柏林"],
+      "ticket": { "referencePriceCny": 15, "known": false, "note": "大门票与联票（含祈年殿、回音壁、圜丘）不同，以官方公示为准" },
+      "openHours": { "text": "园门约 06:00-22:00，景点约 08:00-17:30", "known": false },
+      "bestSeason": "四季皆宜，清晨与傍晚最有意境",
+      "suggestedHours": 2.5, "size": "medium", "crowd": "中",
+      "coord": { "lng": 116.407, "lat": 39.882 },
+      "pois": [
+        { "name": "祈年殿", "type": "看点", "mustSee": true, "n": "n_tiantan_qiniandian", "brief": "三重檐圆形大殿，天坛的形象代言" },
+        { "name": "回音壁", "type": "看点", "mustSee": true, "n": "n_tiantan_huiyinbi", "brief": "皇穹宇外围磨砖对缝的圆形围墙，声学奇观" },
+        { "name": "圜丘", "type": "看点", "brief": "三层汉白玉圆坛，冬至祭天的露天祭坛" },
+        { "name": "丹陛桥", "type": "看点", "brief": "连接圜丘与祈谷坛的南北大道，桥下有隧道" },
+        { "name": "古柏林", "type": "看点", "brief": "三千余株百年以上古柏，清晨晨练胜地" }
+      ]
+    },
+    {
+      "id": "v_beihai", "cityId": "beijing", "name": "北海公园", "en": "Beihai Park",
+      "kind": "园林", "level": "4A",
+      "tags": ["自然", "人文", "建筑"],
+      "rating": 4.7, "heat": 76,
+      "summary": "中国现存最古老的皇家园林之一，辽金元明清五朝御苑。「让我们荡起双桨」唱的就是这里。白塔立于琼华岛之巅，湖面可划船，四季景致分明，是闹市中心的一片静水。",
+      "highlights": ["白塔", "琼华岛", "九龙壁", "五龙亭", "静心斋"],
+      "ticket": { "referencePriceCny": 10, "known": false, "note": "旺季与淡季票价不同，以官方公示为准" },
+      "openHours": { "text": "约 06:30-21:00（园中园时间略短）", "known": false },
+      "bestSeason": "夏季赏荷、冬季滑冰场",
+      "suggestedHours": 2, "size": "medium", "crowd": "中",
+      "coord": { "lng": 116.389, "lat": 39.926 },
+      "pois": [
+        { "name": "永安寺白塔", "type": "看点", "mustSee": true, "n": "n_beihai_baita", "brief": "琼华岛顶的藏式白塔，北海的标志" },
+        { "name": "九龙壁", "type": "看点", "brief": "双面各有九条彩色琉璃蟠龙的影壁" },
+        { "name": "五龙亭", "type": "看点", "brief": "北岸临水的五座亭子，观白塔倒影佳处" },
+        { "name": "静心斋", "type": "看点", "brief": "园中之园，叠石理水精致紧凑" },
+        { "name": "琼华岛", "type": "看点", "brief": "可登岛沿爬山廊至白塔下" }
+      ]
+    },
+    {
+      "id": "v_nanluoguxiang", "cityId": "beijing", "name": "南锣鼓巷·什刹海街区", "en": "Nanluoguxiang & Shichahai",
+      "kind": "街区", "level": "3A",
+      "tags": ["街区", "人文", "美食"],
+      "rating": 4.5, "heat": 84,
+      "summary": "北京最老的胡同片区之一，元大都「鱼骨式」胡同格局保留至今。主街店铺林立，两侧胡同藏着茅盾故居、齐白石旧居；什刹海环湖酒吧与银锭桥日落，是老北京的活色生香。",
+      "highlights": ["南锣主街", "帽儿胡同", "银锭桥", "烟袋斜街", "钟鼓楼"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "街区免费开放；故居类小景点或单独收费" },
+      "openHours": { "text": "全天开放，店铺多在 10:00-22:00", "known": true },
+      "bestSeason": "四季皆宜，傍晚最有味道",
+      "suggestedHours": 2.5, "size": "medium", "crowd": "高",
+      "coord": { "lng": 116.403, "lat": 39.941 },
+      "pois": [
+        { "name": "南锣主街", "type": "街区", "mustSee": true, "n": "n_nanluo_zhujie", "brief": "全长约 787 米的元代胡同主街" },
+        { "name": "帽儿胡同", "type": "街区", "brief": "两侧支巷的代表，四合院与名人故居集中" },
+        { "name": "银锭桥", "type": "看点", "brief": "什刹海前海与后海交界小石桥，「银锭观山」旧景所在" },
+        { "name": "烟袋斜街", "type": "街区", "brief": "通往鼓楼的老斜街，形似烟袋锅得名" },
+        { "name": "钟鼓楼", "type": "看点", "brief": "元明清报时中心，可登楼俯瞰中轴线北端" }
+      ]
+    },
+    {
+      "id": "v_xihu", "cityId": "hangzhou", "name": "西湖风景名胜区", "en": "West Lake",
+      "kind": "景区", "level": "5A", "worldHeritage": true,
+      "tags": ["自然", "人文", "世界遗产"],
+      "rating": 4.9, "heat": 99,
+      "summary": "三面云山一面城，苏白两堤把湖分成几重景致。西湖十景各有典故，断桥连着白娘子传说，三潭印月印在一元纸币背面。环湖免费开放，步行、骑行、乘船皆是打开方式。",
+      "highlights": ["断桥残雪", "苏堤春晓", "三潭印月", "雷峰塔", "花港观鱼"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "环湖免费；雷峰塔、三潭印月（游船登岛）等另收费" },
+      "openHours": { "text": "环湖全天开放", "known": true },
+      "bestSeason": "春季桃柳夹堤，冬季雪后断桥，中秋赏月",
+      "suggestedHours": 4, "size": "large", "crowd": "极高",
+      "coord": { "lng": 120.150, "lat": 30.246 },
+      "pois": [
+        { "name": "断桥残雪", "type": "看点", "mustSee": true, "n": "n_xihu_duanqiao", "brief": "白堤东端，白娘子与许仙相会之地" },
+        { "name": "苏堤", "type": "看点", "mustSee": true, "n": "n_xihu_sudi", "brief": "苏东坡疏浚西湖所筑长堤，六桥烟柳" },
+        { "name": "三潭印月", "type": "看点", "mustSee": true, "n": "n_xihu_santan", "brief": "湖中三座石塔，一元纸币背面的图案" },
+        { "name": "雷峰塔", "type": "看点", "brief": "夕照山上的新塔，可登塔俯瞰全湖" },
+        { "name": "花港观鱼", "type": "看点", "brief": "红鱼池与牡丹园，西湖十景之一" },
+        { "name": "曲院风荷", "type": "看点", "brief": "夏季赏荷第一去处" }
+      ]
+    },
+    {
+      "id": "v_lingyin", "cityId": "hangzhou", "name": "灵隐飞来峰景区", "en": "Lingyin Temple",
+      "kind": "寺庙", "level": "5A",
+      "tags": ["人文", "建筑", "石窟造像"],
+      "rating": 4.8, "heat": 90,
+      "summary": "东晋古刹「云林禅寺」与飞来峰石窟造像同处一谷。飞来峰三百四十余尊五代至元造像沿溪而凿，南宋大肚弥勒是其中明星；寺内香火鼎盛，济公传说在这里家喻户晓。",
+      "highlights": ["飞来峰造像", "天王殿", "大雄宝殿", "理公塔", "冷泉"],
+      "ticket": { "referencePriceCny": 75, "known": false, "note": "飞来峰门票与灵隐寺香花券分开收取，以官方公示为准" },
+      "openHours": { "text": "约 06:30-18:00", "known": false },
+      "bestSeason": "四季皆宜，秋日溪山最清",
+      "suggestedHours": 3, "size": "medium", "crowd": "高",
+      "coord": { "lng": 120.097, "lat": 30.241 },
+      "pois": [
+        { "name": "飞来峰造像", "type": "看点", "mustSee": true, "n": "n_lingyin_feilaifeng", "brief": "五代至元代摩崖造像群，江南石窟艺术代表" },
+        { "name": "大雄宝殿", "type": "看点", "mustSee": true, "n": "n_lingyin_daxiong", "brief": "灵隐寺主殿，高大的释迦牟尼贴金坐像" },
+        { "name": "天王殿", "type": "看点", "brief": "「云林禅寺」匾额悬于此，弥勒与四大天王" },
+        { "name": "冷泉亭", "type": "看点", "brief": "溪畔古亭，白居易苏轼题咏之地" },
+        { "name": "理公塔", "type": "看点", "brief": "纪念开山祖师慧理的石塔" }
+      ]
+    },
+    {
+      "id": "v_xixi", "cityId": "hangzhou", "name": "西溪国家湿地公园", "en": "Xixi Wetland",
+      "kind": "景区", "level": "5A",
+      "tags": ["自然", "公园湿地"],
+      "rating": 4.6, "heat": 70,
+      "summary": "中国首个国家湿地公园，「一曲溪流一曲烟」。水道纵横、芦苇摇曳，乘摇橹船穿行河汊之间，秋雪庵的芦花与火柿节最有名。电影《非诚勿扰》取景地。",
+      "highlights": ["摇橹船水道", "秋雪庵", "深潭口", "河渚街", "火柿林"],
+      "ticket": { "referencePriceCny": 80, "known": false, "note": "门票与船票分开，区域套票多样，以官方公示为准" },
+      "openHours": { "text": "约 08:00-17:30", "known": false },
+      "bestSeason": "秋季芦花如雪、柿熟满枝",
+      "suggestedHours": 3.5, "size": "large", "crowd": "中",
+      "coord": { "lng": 120.060, "lat": 30.273 },
+      "pois": [
+        { "name": "周家村主入口水道", "type": "门区", "n": "n_xixi_shuidao", "brief": "摇橹船出发地，纵横交错的核心水域" },
+        { "name": "秋雪庵", "type": "看点", "mustSee": true, "brief": "芦花胜雪的孤岛小庵，需乘船前往" },
+        { "name": "深潭口", "type": "看点", "brief": "百年樟树下的古戏台，龙舟胜会之地" },
+        { "name": "河渚街", "type": "街区", "brief": "湿地里的老街，蒋村集市与小吃" },
+        { "name": "烟水渔庄", "type": "看点", "brief": "桑蚕丝绸故事馆与水乡餐饮" }
+      ]
+    },
+    {
+      "id": "v_qinghefang", "cityId": "hangzhou", "name": "清河坊历史街区", "en": "Qinghefang",
+      "kind": "街区", "level": "4A",
+      "tags": ["街区", "美食", "人文"],
+      "rating": 4.3, "heat": 62,
+      "summary": "南宋临安的皇城根商业街，至今仍是老字号聚集地：胡庆余堂、方回春堂、万隆火腿。河坊街与南宋御街十字相交，铜雕艺术馆、胡庆余堂中药博物馆都值得入内。",
+      "highlights": ["河坊街", "南宋御街", "胡庆余堂", "吴山广场"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "街区免费；胡庆余堂中药博物馆等单独收费" },
+      "openHours": { "text": "全天开放，店铺约 09:30-22:00", "known": true },
+      "bestSeason": "四季皆宜，夜晚灯火更盛",
+      "suggestedHours": 2, "size": "small", "crowd": "高",
+      "coord": { "lng": 120.163, "lat": 30.243 },
+      "pois": [
+        { "name": "河坊街", "type": "街区", "mustSee": true, "n": "n_qinghe_hefangjie", "brief": "主街，老字号与小吃摊一字排开" },
+        { "name": "胡庆余堂", "type": "看点", "brief": "「江南药王」红顶商人胡雪岩创办的国药号" },
+        { "name": "南宋御街", "type": "街区", "brief": "南宋皇帝祭祖御道，今为文艺商铺街" },
+        { "name": "鼓楼", "type": "看点", "brief": "街区南端地标，登楼可望吴山" }
+      ]
+    },
+    {
+      "id": "v_zhuozhengyuan", "cityId": "suzhou", "name": "拙政园", "en": "Humble Administrator's Garden",
+      "kind": "园林", "level": "5A", "worldHeritage": true,
+      "tags": ["建筑", "人文", "世界遗产"],
+      "rating": 4.8, "heat": 94,
+      "summary": "苏州最大的古典园林，中国四大名园之一，明代御史王献臣弃官回乡所筑，取「拙者之为政」自嘲。全园以水为中心，远香堂四面厅观夏荷，与谁同坐轩扇形小亭是点睛之笔。",
+      "highlights": ["远香堂", "小飞虹", "与谁同坐轩", "见山楼", "卅六鸳鸯馆"],
+      "ticket": { "referencePriceCny": 80, "known": false, "note": "旺季/淡季票价不同，需实名预约，以官方公示为准" },
+      "openHours": { "text": "约 07:30-17:30（淡季略短）", "known": false },
+      "bestSeason": "夏赏荷、秋观叶；雨天游园别有韵味",
+      "suggestedHours": 2.5, "size": "medium", "crowd": "高",
+      "coord": { "lng": 120.629, "lat": 31.325 },
+      "pois": [
+        { "name": "远香堂", "type": "看点", "mustSee": true, "n": "n_zhuozheng_yuanxiang", "brief": "中部主厅，四面皆窗，夏荷香气入堂" },
+        { "name": "小飞虹", "type": "看点", "mustSee": true, "n": "n_zhuozheng_xiaofeihong", "brief": "苏州园林中少见的廊桥，倒影如虹" },
+        { "name": "与谁同坐轩", "type": "看点", "brief": "扇形小亭，取苏轼「与谁同坐？明月清风我」" },
+        { "name": "见山楼", "type": "看点", "brief": "水中小楼，太平天国时李秀成曾在此办公" },
+        { "name": "卅六鸳鸯馆", "type": "看点", "brief": "西部主厅，一厅隔两半，顶棚妙音回环" }
+      ]
+    },
+    {
+      "id": "v_liuyuan", "cityId": "suzhou", "name": "留园", "en": "Lingering Garden",
+      "kind": "园林", "level": "5A", "worldHeritage": true,
+      "tags": ["建筑", "人文", "世界遗产"],
+      "rating": 4.7, "heat": 74,
+      "summary": "与拙政园并称的四大名园之一，以建筑空间艺术著称：五十余米曲折长廊串起厅堂庭院，冠云峰是江南园林中最高大的太湖石，楼台亭阁疏密有致，移步换景的教科书。",
+      "highlights": ["冠云峰", "涵碧山房", "五峰仙馆", "曲谿楼"],
+      "ticket": { "referencePriceCny": 45, "known": false, "note": "旺季/淡季票价不同，以官方公示为准" },
+      "openHours": { "text": "约 07:30-17:30", "known": false },
+      "bestSeason": "四季皆宜",
+      "suggestedHours": 2, "size": "medium", "crowd": "中",
+      "coord": { "lng": 120.561, "lat": 31.318 },
+      "pois": [
+        { "name": "冠云峰", "type": "看点", "mustSee": true, "n": "n_liuyuan_guanyun", "brief": "高约 6.5 米的太湖石峰，「瘦皱漏透」四德俱全" },
+        { "name": "涵碧山房", "type": "看点", "brief": "中部主厅，临荷池而筑" },
+        { "name": "五峰仙馆", "type": "看点", "brief": "楠木厅堂，「江南第一厅堂」" },
+        { "name": "曲谿楼", "type": "看点", "brief": "长廊转角楼，漏窗借景绝佳" }
+      ]
+    },
+    {
+      "id": "v_huqiu", "cityId": "suzhou", "name": "虎丘山风景区", "en": "Tiger Hill",
+      "kind": "景区", "level": "5A",
+      "tags": ["人文", "自然", "建筑"],
+      "rating": 4.7, "heat": 68,
+      "summary": "「到苏州不游虎丘乃憾事也」——苏东坡如是说。云岩寺塔（虎丘塔）是江南现存最古老的砖塔，塔身倾斜千年不倒；剑池之下相传藏吴王阖闾墓，真娘墓与千人石各有故事。",
+      "highlights": ["云岩寺塔", "剑池", "千人石", "断梁殿", "拥翠山庄"],
+      "ticket": { "referencePriceCny": 60, "known": false, "note": "旺季票价约 60-70 元，以官方公示为准" },
+      "openHours": { "text": "约 07:30-17:30", "known": false },
+      "bestSeason": "春秋皆宜；庙会与花会时节最热闹",
+      "suggestedHours": 2.5, "size": "medium", "crowd": "中",
+      "coord": { "lng": 120.573, "lat": 31.331 },
+      "pois": [
+        { "name": "云岩寺塔", "type": "看点", "mustSee": true, "n": "n_huqiu_yunyan", "brief": "五代砖塔，塔身向东北倾斜，人称「东方比萨斜塔」" },
+        { "name": "剑池", "type": "看点", "mustSee": true, "n": "n_huqiu_jianchi", "brief": "两崖裂石如剑的一泓深水，下藏吴王阖闾墓之谜" },
+        { "name": "千人石", "type": "看点", "brief": "平坦巨石广场，生公讲法「顽石点头」处" },
+        { "name": "断梁殿", "type": "门区", "brief": "二山门，主梁断为两截却数百年不倒" },
+        { "name": "真娘墓", "type": "看点", "brief": "唐代名妓之墓，历代文人题咏不绝" }
+      ]
+    },
+    {
+      "id": "v_pingjianglu", "cityId": "suzhou", "name": "平江路历史街区", "en": "Pingjiang Road",
+      "kind": "街区", "level": "4A",
+      "tags": ["街区", "人文", "美食"],
+      "rating": 4.6, "heat": 80,
+      "summary": "宋《平江图》上就有的一条枕河老街，「水陆并行、河街相邻」的双棋盘格局延续八百年。青石板路、评弹声、猫的天空之城与苏式小吃，是苏州慢生活的一张脸。",
+      "highlights": ["平江主街", "评弹茶馆", "耦园", "丁香巷"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "街区免费；耦园等园林单独收费" },
+      "openHours": { "text": "全天开放", "known": true },
+      "bestSeason": "四季皆宜，雨天最有江南感",
+      "suggestedHours": 2, "size": "small", "crowd": "高",
+      "coord": { "lng": 120.634, "lat": 31.322 },
+      "pois": [
+        { "name": "平江主街", "type": "街区", "mustSee": true, "n": "n_pingjiang_zhujie", "brief": "1600 余米的主街，河街并行" },
+        { "name": "评弹茶馆", "type": "看点", "brief": "点一壶茶听一曲吴侬软语的评弹" },
+        { "name": "丁香巷", "type": "街区", "brief": "戴望舒《雨巷》意象所在的支巷" },
+        { "name": "耦园", "type": "看点", "brief": "三面临水的世界遗产小园，佳偶天成之名" }
+      ]
+    },
+    {
+      "id": "v_zhongshanling", "cityId": "nanjing", "name": "钟山风景名胜区（中山陵·明孝陵）", "en": "Purple Mountain",
+      "kind": "景区", "level": "5A", "worldHeritage": true,
+      "tags": ["人文", "自然", "历史"],
+      "rating": 4.9, "heat": 91,
+      "summary": "一座钟山半部民国史。中山陵 392 级石阶博爱天下，明孝陵是明清皇家陵寝的鼻祖，石象路的秋色号称「南京最美 600 米」。灵谷寺、美龄宫串联成线，需大半天时间。",
+      "highlights": ["中山陵祭堂", "明孝陵石象路", "灵谷寺", "美龄宫"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "中山陵陵寝免费（需预约）；明孝陵、灵谷寺、美龄宫联票另购" },
+      "openHours": { "text": "约 08:30-17:00；中山陵周一闭馆（祭堂）", "known": false },
+      "bestSeason": "11 月石象路秋色冠绝金陵",
+      "suggestedHours": 5, "size": "large", "crowd": "高",
+      "coord": { "lng": 118.847, "lat": 32.064 },
+      "pois": [
+        { "name": "中山陵博爱坊至祭堂", "type": "看点", "mustSee": true, "n": "n_zhongshan_boaifang", "brief": "392 级石阶与「博爱」「天下为公」牌坊" },
+        { "name": "明孝陵石象路", "type": "看点", "mustSee": true, "n": "n_mingxiao_shixianglu", "brief": "神道石兽秋色，南京秋天的封面" },
+        { "name": "美龄宫", "type": "看点", "brief": "「远东第一别墅」，法国梧桐项链环抱" },
+        { "name": "灵谷寺", "type": "看点", "brief": "无梁殿与阵亡将士纪念塔" },
+        { "name": "音乐台", "type": "看点", "brief": "半圆形露天舞台，鸽子成群" }
+      ]
+    },
+    {
+      "id": "v_fuzimiao", "cityId": "nanjing", "name": "夫子庙-秦淮河风光带", "en": "Confucius Temple & Qinhuai River",
+      "kind": "街区", "level": "5A",
+      "tags": ["街区", "人文", "美食"],
+      "rating": 4.5, "heat": 93,
+      "summary": "「桨声灯影里的秦淮河」。夫子庙是江南贡院所在，科举文化在此登峰；乌衣巷口夕阳斜，王谢古居犹在。夜景画舫是精华，鸭血粉丝与汤包沿街飘香。",
+      "highlights": ["大成殿", "江南贡院", "乌衣巷", "秦淮画舫", "天下文枢牌坊"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "街区免费；大成殿、贡院、画舫等单独收费" },
+      "openHours": { "text": "街区全天；夜景灯光至 22:00 前后", "known": true },
+      "bestSeason": "四季皆宜，上元灯会（农历新年前后）最盛",
+      "suggestedHours": 3, "size": "medium", "crowd": "极高",
+      "coord": { "lng": 118.789, "lat": 32.021 },
+      "pois": [
+        { "name": "天下文枢牌坊", "type": "看点", "brief": "秦淮河畔的地标牌坊，中国文脉中枢之意" },
+        { "name": "大成殿", "type": "看点", "mustSee": true, "n": "n_fuzi_dachengdian", "brief": "夫子庙主殿，孔子塑像与科举展陈" },
+        { "name": "江南贡院", "type": "看点", "mustSee": true, "n": "n_fuzi_gongyuan", "brief": "中国古代最大科举考场，号舍如蜂房" },
+        { "name": "乌衣巷", "type": "街区", "brief": "「旧时王谢堂前燕」诗中的深巷" },
+        { "name": "秦淮画舫码头", "type": "看点", "mustSee": true, "brief": "夜游秦淮河的起点，桨声灯影" }
+      ]
+    },
+    {
+      "id": "v_xuanwuhu", "cityId": "nanjing", "name": "玄武湖公园", "en": "Xuanwu Lake",
+      "kind": "园林", "level": "4A",
+      "tags": ["自然", "公园湿地"],
+      "rating": 4.6, "heat": 64,
+      "summary": "江南三大名湖之一，六朝时是皇家园林湖泊。五洲相连，环湖走一圈约 10 公里，紫金山、明城墙、鸡鸣寺塔影皆可入画，是南京人的城市阳台。",
+      "highlights": ["环湖路", "梁洲", "樱洲", "鸡鸣寺塔影"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放；园内游船、小型园中园或收费" },
+      "openHours": { "text": "约 06:00-21:00（各洲时间略异）", "known": false },
+      "bestSeason": "3 月底樱洲樱花；夏季荷花",
+      "suggestedHours": 2.5, "size": "large", "crowd": "中",
+      "coord": { "lng": 118.795, "lat": 32.075 },
+      "pois": [
+        { "name": "环湖路", "type": "看点", "n": "n_xuanwu_huanhulu", "brief": "最经典的城市漫步道，湖城一体" },
+        { "name": "樱洲", "type": "看点", "brief": "春天樱花连片的湖心洲" },
+        { "name": "梁洲", "type": "看点", "brief": "五洲中园林最盛的一洲，盆景馆所在" },
+        { "name": "明城墙（解放门段）", "type": "看点", "brief": "登墙可俯瞰玄武湖与紫金山" }
+      ]
+    },
+    {
+      "id": "v_zongtongfu", "cityId": "nanjing", "name": "南京总统府", "en": "Presidential Palace",
+      "kind": "景区", "level": "4A",
+      "tags": ["人文", "历史", "建筑"],
+      "rating": 4.7, "heat": 72,
+      "summary": "一座总统府，三百年中国近代史：康熙乾隆下江南的行宫、太平天国天朝宫殿、清末两江总督署、民国总统府层层叠加。中西合璧的子超楼、煦园水榭值得细看。",
+      "highlights": ["子超楼", "煦园", "天王宝座", "两江总督署史料展"],
+      "ticket": { "referencePriceCny": 35, "known": false, "note": "需实名预约，以官方公示为准" },
+      "openHours": { "text": "约 08:30-18:00；周一闭馆", "known": false },
+      "bestSeason": "四季皆宜",
+      "suggestedHours": 2.5, "size": "medium", "crowd": "高",
+      "coord": { "lng": 118.794, "lat": 32.049 },
+      "pois": [
+        { "name": "门楼", "type": "门区", "n": "n_zongtong_menlou", "brief": "1946 年改建的西式门楼，民国史的地标封面" },
+        { "name": "子超楼", "type": "看点", "mustSee": true, "brief": "总统办公室所在，林森手植雪松于楼前" },
+        { "name": "煦园", "type": "看点", "mustSee": true, "brief": "明汉王府遗存的西花园，石舫不系舟" },
+        { "name": "天王宝座殿", "type": "看点", "brief": "太平天国金龙殿旧址，洪秀全天朝宫殿" }
+      ]
+    },
+    {
+      "id": "v_bingmayong", "cityId": "xian", "name": "秦始皇帝陵博物院", "en": "Terracotta Army",
+      "kind": "景区", "level": "5A", "worldHeritage": true,
+      "tags": ["人文", "历史", "世界遗产"],
+      "rating": 4.9, "heat": 97,
+      "summary": "「世界第八大奇迹」。三个兵马俑坑陈列数千件与真人等高的陶俑陶马，千人千面无一雷同；铜车马被誉为「青铜之冠」。一号坑的修复区可见考古工作者现场拼对残片。",
+      "highlights": ["一号坑", "二号坑", "三号坑", "铜车马馆"],
+      "ticket": { "referencePriceCny": 120, "known": false, "note": "旺季 120 元上下，需官方渠道实名预约，以公示为准" },
+      "openHours": { "text": "约 08:30-17:00（旺季至 18:00）", "known": false },
+      "bestSeason": "四季皆宜，避开暑期高峰更从容",
+      "suggestedHours": 4, "size": "large", "crowd": "极高",
+      "coord": { "lng": 109.279, "lat": 34.385 },
+      "pois": [
+        { "name": "一号坑", "type": "看点", "mustSee": true, "n": "n_bingma_yihao", "brief": "最大的俑坑，步兵与战车方阵主力军阵" },
+        { "name": "二号坑", "type": "看点", "mustSee": true, "n": "n_bingma_erhao", "brief": "混合军阵，跪射俑与骑兵俑保存最好" },
+        { "name": "三号坑", "type": "看点", "brief": "规模最小的「指挥部」，运筹帷幄之所" },
+        { "name": "铜车马馆", "type": "看点", "mustSee": true, "n": "n_bingma_tongchema", "brief": "两乘按真车二分之一制作的青铜马车" }
+      ]
+    },
+    {
+      "id": "v_chengqiang", "cityId": "xian", "name": "西安城墙", "en": "Xi'an City Wall",
+      "kind": "景区", "level": "5A",
+      "tags": ["人文", "建筑", "历史"],
+      "rating": 4.8, "heat": 89,
+      "summary": "中国现存规模最大、保存最完整的古代城垣，明洪武年间在唐皇城基础上扩建。13.7 公里的环城可骑行一圈（约 100 分钟），永宁门瓮城 nightly 灯光与仿唐开城仪式最出名。",
+      "highlights": ["永宁门", "瓮城", "环城骑行", "魁星楼"],
+      "ticket": { "referencePriceCny": 54, "known": false, "note": "城墙门票 54 元上下，自行车租赁另计（单车约 45 元/3 小时，以现场为准）", "knownNote": true },
+      "openHours": { "text": "约 08:00-22:00（永宁门亮灯至更晚）", "known": false },
+      "bestSeason": "春秋季傍晚登墙最佳",
+      "suggestedHours": 2.5, "size": "large", "crowd": "高",
+      "coord": { "lng": 108.941, "lat": 34.261 },
+      "pois": [
+        { "name": "永宁门（南门）", "type": "门区", "mustSee": true, "n": "n_chengqiang_yongning", "brief": "西安城墙正南门，迎宾仪式与灯光秀所在" },
+        { "name": "瓮城", "type": "看点", "n": "n_chengqiang_wengcheng", "brief": "「瓮中捉鳖」的军事设计，城套城" },
+        { "name": "环城骑行道", "type": "看点", "mustSee": true, "brief": "13.7 公里骑行一圈，俯瞰古城双面" },
+        { "name": "魁星楼", "type": "看点", "brief": "城墙东南角的文昌魁星楼" }
+      ]
+    },
+    {
+      "id": "v_dayanta", "cityId": "xian", "name": "大雁塔·大唐不夜城", "en": "Giant Wild Goose Pagoda",
+      "kind": "景区", "level": "5A",
+      "tags": ["人文", "建筑", "街区"],
+      "rating": 4.8, "heat": 95,
+      "summary": "玄奘译经藏经之地，唐长安的地标；北广场音乐喷泉号称亚洲最大。塔后的大唐不夜城步行街夜夜笙歌，不倒翁小姐姐与灯光秀是流量的中心，夜西安的正确打开方式。",
+      "highlights": ["大雁塔", "北广场音乐喷泉", "大唐不夜城", "玄奘像"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "广场免费；登大雁塔需慈恩寺门票 40 元 + 登塔 30 元（参考，未核验）" },
+      "openHours": { "text": "广场全天；不夜城约 10:00-23:00，喷泉场次见现场公示", "known": false },
+      "bestSeason": "四季皆宜，夜景四季不变",
+      "suggestedHours": 3, "size": "medium", "crowd": "极高",
+      "coord": { "lng": 108.964, "lat": 34.224 },
+      "pois": [
+        { "name": "大雁塔", "type": "看点", "mustSee": true, "n": "n_dayanta_talou", "brief": "652 年始建的七层砖塔，玄奘藏经之所" },
+        { "name": "北广场音乐喷泉", "type": "看点", "mustSee": true, "brief": "夜间灯光音乐喷泉，人山人海提前占位" },
+        { "name": "大唐不夜城步行街", "type": "街区", "n": "n_dayanta_buyecheng", "brief": "1500 米盛唐主题灯光步行街" },
+        { "name": "玄奘铜像", "type": "看点", "brief": "南广场上的玄奘像，与塔同框最佳机位" }
+      ]
+    },
+    {
+      "id": "v_huiminjie", "cityId": "xian", "name": "回民街（北院门）", "en": "Muslim Quarter",
+      "kind": "街区", "level": "3A",
+      "tags": ["街区", "美食"],
+      "rating": 4.3, "heat": 86,
+      "summary": "西安最负盛名的美食街区，北院门、西羊市、大皮院纵横交错。老米家泡馍、定家小酥肉、盛志望麻酱酿皮都在巷子深处；化觉巷清真大寺是街区的精神中心。",
+      "highlights": ["北院门主街", "化觉巷清真大寺", "西羊市", "高家大院"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "街区免费；清真大寺门票约 25 元（参考，未核验）" },
+      "openHours": { "text": "全天开放，餐饮高峰 11:00-22:00", "known": true },
+      "bestSeason": "四季皆宜，夜晚最热闹",
+      "suggestedHours": 2, "size": "small", "crowd": "极高",
+      "coord": { "lng": 108.936, "lat": 34.264 },
+      "pois": [
+        { "name": "北院门主街", "type": "街区", "mustSee": true, "n": "n_huimin_beiyuanmen", "brief": "鼓楼后一声吆喝的老街，美食密度最高" },
+        { "name": "化觉巷清真大寺", "type": "看点", "mustSee": true, "n": "n_huimin_qingzhensi", "brief": "中式建筑风格的千年清真古寺" },
+        { "name": "西羊市", "type": "街区", "brief": "本地人觅食的小巷，泡馍与小酥肉" },
+        { "name": "高家大院", "type": "看点", "brief": "清代榜眼府邸，可看皮影与老宅" }
+      ]
+    },
+    {
+      "id": "v_pandabase", "cityId": "chengdu", "name": "成都大熊猫繁育研究基地", "en": "Chengdu Panda Base",
+      "kind": "景区", "level": "5A",
+      "tags": ["自然", "亲子", "科普"],
+      "rating": 4.8, "heat": 96,
+      "summary": "世界著名的大熊猫迁地保护基地，两百多只大熊猫在此生活。清晨的幼年园「月亮产房」最出圈，滚滚们吃竹子、打滚、挂在树上午睡。建议开园即入，地铁 3 号线直达。",
+      "highlights": ["月亮产房", "太阳产房", "成年大熊猫别墅", "天鹅湖"],
+      "ticket": { "referencePriceCny": 55, "known": false, "note": "约 55 元，需实名预约，以官方公示为准" },
+      "openHours": { "text": "约 07:30-18:00（熊猫上午最活跃）", "known": false },
+      "bestSeason": "四季皆宜；熊猫怕热，夏天上午更活跃",
+      "suggestedHours": 3, "size": "large", "crowd": "极高",
+      "coord": { "lng": 104.145, "lat": 30.734 },
+      "pois": [
+        { "name": "月亮产房", "type": "看点", "mustSee": true, "n": "n_panda_yueliang", "brief": "幼年熊猫园区，最治愈也最热门" },
+        { "name": "成年大熊猫别墅", "type": "看点", "mustSee": true, "brief": "散养式熊猫家园，看滚滚吃播" },
+        { "name": "太阳产房", "type": "看点", "brief": "新生熊猫育幼展示区" },
+        { "name": "天鹅湖", "type": "看点", "brief": "基地湿地，黑天鹅与水杉步道" }
+      ]
+    },
+    {
+      "id": "v_wuhouci", "cityId": "chengdu", "name": "武侯祠·锦里", "en": "Wuhou Shrine & Jinli",
+      "kind": "景区", "level": "4A",
+      "tags": ["人文", "历史", "街区"],
+      "rating": 4.7, "heat": 85,
+      "summary": "中国唯一君臣合祀的祠庙，刘备惠陵与诸葛亮祠同在，红墙竹影小径是出片率最高的角落；一墙之隔的锦里古街夜色繁华，三国主题小吃与手工艺琳琅满目。",
+      "highlights": ["红墙竹影", "诸葛亮殿", "刘备殿", "三义庙", "锦里古街"],
+      "ticket": { "referencePriceCny": 50, "known": false, "note": "武侯祠约 50 元；锦里街区免费", "knownNote": true },
+      "openHours": { "text": "约 09:00-18:00；锦里全天（店铺 10:00-22:00）", "known": false },
+      "bestSeason": "四季皆宜，夜晚锦里更佳",
+      "suggestedHours": 3, "size": "medium", "crowd": "高",
+      "coord": { "lng": 104.046, "lat": 30.644 },
+      "pois": [
+        { "name": "红墙竹影小径", "type": "看点", "mustSee": true, "n": "n_wuhou_hongqiang", "brief": "翠竹掩映红墙，成都最著名的取景框" },
+        { "name": "诸葛亮殿", "type": "看点", "mustSee": true, "n": "n_wuhou_zhugeliang", "brief": "静远堂，攻心联悬于殿前" },
+        { "name": "刘备殿", "type": "看点", "brief": "汉昭烈庙正殿，文臣武将廊列两庑" },
+        { "name": "锦里古街", "type": "街区", "mustSee": true, "n": "n_wuhou_jinli", "brief": "三国民俗主题古街，夜色最动人" }
+      ]
+    },
+    {
+      "id": "v_kuanzhai", "cityId": "chengdu", "name": "宽窄巷子", "en": "Kuanzhai Alleys",
+      "kind": "街区", "level": "3A",
+      "tags": ["街区", "人文", "美食"],
+      "rating": 4.4, "heat": 88,
+      "summary": "清代满城遗留的三条巷子：宽巷子怀旧、窄巷子慢生活、井巷子市井。院落文化、川剧变脸、盖碗茶与掏耳朵的师傅们，构成了成都闲适气质的浓缩样本。",
+      "highlights": ["宽巷子", "窄巷子", "井巷子", "小洋楼"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "街区免费" },
+      "openHours": { "text": "全天开放，店铺约 10:00-22:30", "known": true },
+      "bestSeason": "四季皆宜，午后晒太阳最巴适",
+      "suggestedHours": 2, "size": "small", "crowd": "高",
+      "coord": { "lng": 104.053, "lat": 30.663 },
+      "pois": [
+        { "name": "宽巷子", "type": "街区", "mustSee": true, "n": "n_kuanzhai_kuan", "brief": "老成都生活记忆，院落茶馆多" },
+        { "name": "窄巷子", "type": "街区", "mustSee": true, "n": "n_kuanzhai_zhai", "brief": "慢生活院落，咖啡馆与小资情调" },
+        { "name": "井巷子", "type": "街区", "brief": "砖文化墙与创意市集" },
+        { "name": "小洋楼", "type": "看点", "brief": "民国中西合璧建筑，巷子里的时代切片" }
+      ]
+    },
+    {
+      "id": "v_renmigongyuan", "cityId": "chengdu", "name": "人民公园", "en": "People's Park",
+      "kind": "园林", "level": "3A",
+      "tags": ["公园湿地", "人文", "街区"],
+      "rating": 4.6, "heat": 66,
+      "summary": "成都慢生活的原点：鹤鸣茶社百年不熄的盖碗茶、露天掏耳朵的师傅、保路运动纪念碑、相亲角与金河路梧桐。花两小时坐进茶馆，才算真正到过成都。",
+      "highlights": ["鹤鸣茶社", "保路运动纪念碑", "相亲角", "菊花展"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放；茶消费自理" },
+      "openHours": { "text": "约 06:30-22:30", "known": false },
+      "bestSeason": "秋季菊花展；平日午后最闲适",
+      "suggestedHours": 2, "size": "small", "crowd": "中",
+      "coord": { "lng": 104.055, "lat": 30.659 },
+      "pois": [
+        { "name": "鹤鸣茶社", "type": "看点", "mustSee": true, "n": "n_renmin_heming", "brief": "百年茶社，竹椅盖碗茶配采耳师傅" },
+        { "name": "保路运动纪念碑", "type": "看点", "brief": "1913 年建，辛亥革命导火索的纪念" },
+        { "name": "相亲角", "type": "看点", "brief": "周末人山人海的「父母相亲角」" }
+      ]
+    },
+    {
+      "id": "v_yuyuan", "cityId": "shanghai", "name": "豫园·城隍庙", "en": "Yu Garden",
+      "kind": "园林", "level": "5A",
+      "tags": ["建筑", "人文", "美食"],
+      "rating": 4.6, "heat": 89,
+      "summary": "明代四川布政使潘允端为父所建的江南园林，玉玲珑是镇园之石；园外商肆如云，南翔馒头店的小笼包永远排队。元宵灯会九曲桥流光溢彩，是上海最江南的一角。",
+      "highlights": ["玉玲珑", "大假山", "九曲桥", "湖心亭", "城隍庙"],
+      "ticket": { "referencePriceCny": 40, "known": false, "note": "豫园门票约 30-40 元（旺季灯会期间另计），以官方公示为准" },
+      "openHours": { "text": "约 09:00-16:30（停止入园较早，注意）", "known": false },
+      "bestSeason": "元宵灯会；四季皆宜",
+      "suggestedHours": 2.5, "size": "medium", "crowd": "极高",
+      "coord": { "lng": 121.492, "lat": 31.227 },
+      "pois": [
+        { "name": "玉玲珑", "type": "看点", "mustSee": true, "n": "n_yuyuan_yulinglong", "brief": "宋代花石纲遗物，江南三大名石之一" },
+        { "name": "大假山", "type": "看点", "mustSee": true, "n": "n_yuyuan_dajiashan", "brief": "明代叠山名家张南阳作品，园门第一景" },
+        { "name": "九曲桥·湖心亭", "type": "看点", "mustSee": true, "n": "n_yuyuan_jiuqu", "brief": "豫园商城的标志，灯会核心机位" },
+        { "name": "点春堂", "type": "看点", "brief": "小刀会起义旧址，厅堂彩塑精美" }
+      ]
+    },
+    {
+      "id": "v_waitan", "cityId": "shanghai", "name": "外滩", "en": "The Bund",
+      "kind": "街区", "level": "5A",
+      "tags": ["建筑", "都市观光", "夜景"],
+      "rating": 4.8, "heat": 97,
+      "summary": "1.5 公里的万国建筑博览群：52 幢古典主义、新古典主义、装饰艺术风格大楼沿黄浦江排开，对岸是陆家嘴三件套。日落时分亮灯，「不夜城」从此有了具象。",
+      "highlights": ["万国建筑群", "外滩观景平台", "黄浦江游船", "陈毅广场"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放；游船票另购（约 120 元起，参考）" },
+      "openHours": { "text": "全天开放；建筑群亮灯约 19:00-22:00", "known": true },
+      "bestSeason": "四季皆宜；傍晚至夜间最壮观",
+      "suggestedHours": 2, "size": "medium", "crowd": "极高",
+      "coord": { "lng": 121.490, "lat": 31.236 },
+      "pois": [
+        { "name": "万国建筑群（中山东一路）", "type": "看点", "mustSee": true, "n": "n_waitan_jianzhuqun", "brief": "海关大楼、汇丰银行大楼等百年建筑列阵" },
+        { "name": "观景平台", "type": "看点", "mustSee": true, "brief": "隔江正对陆家嘴天际线，夜景第一现场" },
+        { "name": "十六铺游船码头", "type": "服务", "brief": "黄浦江夜游船出发点" },
+        { "name": "外白渡桥", "type": "看点", "brief": "1908 年建成的全钢桁架桥，《情深深雨濛濛》同款" }
+      ]
+    },
+    {
+      "id": "v_tianzifang", "cityId": "shanghai", "name": "田子坊·思南公馆", "en": "Tianzifang",
+      "kind": "街区", "level": "3A",
+      "tags": ["街区", "艺术", "美食"],
+      "rating": 4.4, "heat": 72,
+      "summary": "泰康路石库门弄堂改造的艺术街区，画廊、手作店、咖啡馆在窄弄里层层叠叠；步行可达的思南公馆是梧桐区花园洋房群，两处连逛正是「魔都腔调」的完整拼图。",
+      "highlights": ["田子坊弄堂", "思南公馆", "日月光中心"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放" },
+      "openHours": { "text": "约 10:00-22:00（各店不一）", "known": true },
+      "bestSeason": "四季皆宜，梧桐落叶季最美",
+      "suggestedHours": 2, "size": "small", "crowd": "高",
+      "coord": { "lng": 121.467, "lat": 31.210 },
+      "pois": [
+        { "name": "田子坊主弄", "type": "街区", "mustSee": true, "n": "n_tianzi_zhulon", "brief": "石库门里弄式的立体商业迷宫" },
+        { "name": "思南公馆", "type": "街区", "mustSee": true, "brief": "51 幢花园洋房，思南书局诗歌店所在" },
+        { "name": "日月光中心", "type": "服务", "brief": "地下美食广场，逛累后的补给站" }
+      ]
+    },
+    {
+      "id": "v_zhujiajiao", "cityId": "shanghai", "name": "朱家角古镇", "en": "Zhujiajiao",
+      "kind": "街区", "level": "4A",
+      "tags": ["街区", "水乡古镇", "人文"],
+      "rating": 4.5, "heat": 64,
+      "summary": "上海保存最完整的水乡古镇，漕港河放生桥横卧五百年。北大街「一线天」式老街阿婆粽飘香，课植园（庄园式园林）是江南独一份的规模。地铁 17 号线直达，是上海人的周末后花园。",
+      "highlights": ["放生桥", "北大街", "课植园", "摇橹船"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "古镇免费进镇；课植园等小景点联票约 30-60 元（参考，未核验）" },
+      "openHours": { "text": "全天开放；小景点约 08:30-16:30", "known": false },
+      "bestSeason": "春秋皆宜，避开节假日高峰",
+      "suggestedHours": 3, "size": "medium", "crowd": "中",
+      "coord": { "lng": 121.054, "lat": 31.112 },
+      "pois": [
+        { "name": "放生桥", "type": "看点", "mustSee": true, "n": "n_zhujia_fangsheng", "brief": "五孔石拱桥，江南水乡最长石桥之一" },
+        { "name": "北大街", "type": "街区", "mustSee": true, "brief": "「一线天」老街，阿婆粽与扎肉香满巷" },
+        { "name": "课植园", "type": "看点", "n": "n_zhujia_kezhi", "brief": "「课读之余不忘耕植」的庄园式园林" },
+        { "name": "摇橹船码头", "type": "服务", "brief": "水上游镇的最佳方式" }
+      ]
+    },
+    {
+      "id": "v_chenjiaci", "cityId": "guangzhou", "name": "陈家祠（陈氏书院）", "en": "Chen Clan Ancestral Hall",
+      "kind": "景区", "level": "4A",
+      "tags": ["建筑", "人文", "工艺"],
+      "rating": 4.8, "heat": 70,
+      "summary": "清代广东各县陈姓宗族合资兴建的合族祠，岭南建筑装饰艺术的集大成者：木雕、砖雕、石雕、灰塑、陶塑、铜铁铸、彩绘「七绝」满布屋脊廊庑，郭沫若赞「天工人可代」。",
+      "highlights": ["聚贤堂", "屋脊陶塑", "木雕屏门", "广东民间工艺博物馆"],
+      "ticket": { "referencePriceCny": 10, "known": false, "note": "约 10 元，以官方公示为准" },
+      "openHours": { "text": "约 09:00-17:30", "known": false },
+      "bestSeason": "四季皆宜",
+      "suggestedHours": 2, "size": "small", "crowd": "中",
+      "coord": { "lng": 113.246, "lat": 23.129 },
+      "pois": [
+        { "name": "聚贤堂", "type": "看点", "mustSee": true, "n": "n_chenjia_juxiantang", "brief": "主殿，屋顶石湾陶塑脊饰最精华" },
+        { "name": "屋脊陶塑", "type": "看点", "mustSee": true, "n": "n_chenjia_taosu", "brief": "连绵的石湾人物瓦脊，抬头即是戏台" },
+        { "name": "木雕屏门", "type": "看点", "brief": "镂雕双面屏门，渔舟唱晚题材成对" },
+        { "name": "砖雕·灰塑", "type": "看点", "brief": "墙楣砖雕与屋檐灰塑的教科书阵列" }
+      ]
+    },
+    {
+      "id": "v_shamian", "cityId": "guangzhou", "name": "沙面岛", "en": "Shamian Island",
+      "kind": "街区", "level": "3A",
+      "tags": ["建筑", "街区", "都市观光"],
+      "rating": 4.6, "heat": 68,
+      "summary": "珠江畔的椭圆小岛，近代曾是英法租界，150 余幢欧陆风格建筑保存完好。樟树成荫的街道拍照绝美，露德圣母堂与汇丰银行旧址是经典机位，黄昏时分最出片。",
+      "highlights": ["欧陆建筑群", "露德圣母堂", "沙面大街", "白鹅潭江景"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放" },
+      "openHours": { "text": "全天开放", "known": true },
+      "bestSeason": "四季皆宜，傍晚光线最美",
+      "suggestedHours": 2, "size": "small", "crowd": "中",
+      "coord": { "lng": 113.239, "lat": 23.106 },
+      "pois": [
+        { "name": "沙面大街建筑群", "type": "看点", "mustSee": true, "n": "n_shamian_jianzhu", "brief": "新古典主义与殖民地外廊式建筑列阵" },
+        { "name": "露德圣母堂", "type": "看点", "mustSee": true, "brief": "1890 年建成的哥特式小教堂" },
+        { "name": "汇丰银行旧址", "type": "看点", "brief": "沙面最恢弘的银行老楼" },
+        { "name": "白鹅潭江堤", "type": "看点", "brief": "珠江开阔处，日落散步道" }
+      ]
+    },
+    {
+      "id": "v_yuexiugongyuan", "cityId": "guangzhou", "name": "越秀公园", "en": "Yuexiu Park",
+      "kind": "园林", "level": "4A",
+      "tags": ["公园湿地", "人文", "自然"],
+      "rating": 4.6, "heat": 58,
+      "summary": "广州最大的综合性公园，五羊石像——广州「羊城」之名的图腾——立于越秀山巅；明代镇海楼（广州博物馆）登楼可望中轴线，古城墙残段与中山纪念碑串联成线。",
+      "highlights": ["五羊石像", "镇海楼", "明代古城墙", "中山纪念碑"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "公园免费；镇海楼（广州博物馆）门票约 10 元（参考）" },
+      "openHours": { "text": "约 06:00-22:00", "known": false },
+      "bestSeason": "四季皆宜，春季花海最盛",
+      "suggestedHours": 2.5, "size": "large", "crowd": "中",
+      "coord": { "lng": 113.267, "lat": 23.148 },
+      "pois": [
+        { "name": "五羊石像", "type": "看点", "mustSee": true, "n": "n_yuexiu_wuyang", "brief": "五羊衔谷传说化作的城市图腾" },
+        { "name": "镇海楼", "type": "看点", "mustSee": true, "n": "n_yuexiu_zhenhailou", "brief": "「岭南第一胜览」，广州博物馆所在" },
+        { "name": "明代古城墙", "type": "看点", "brief": "广州保存最长的明城墙段" },
+        { "name": "中山纪念碑", "type": "看点", "brief": "越秀山顶，与中山纪念堂同轴" }
+      ]
+    },
+    {
+      "id": "v_yongqingfang", "cityId": "guangzhou", "name": "永庆坊·恩宁路", "en": "Yongqing Fang",
+      "kind": "街区", "level": "3A",
+      "tags": ["街区", "人文", "建筑"],
+      "rating": 4.5, "heat": 62,
+      "summary": "老西关骑楼街的城市更新样板：麻石路、趟栊门、满洲窗被小心留下，新式咖啡与手作店住进老屋。粤剧艺术博物馆藏在坊内，李小龙祖居亦在此，是广州「最新旧城」。",
+      "highlights": ["永庆坊主街", "粤剧艺术博物馆", "李小龙祖居", "骑楼街"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "街区免费；粤剧艺术博物馆免费（需预约）" },
+      "openHours": { "text": "全天开放；博物馆约 09:00-17:30（周一闭馆）", "known": false },
+      "bestSeason": "四季皆宜",
+      "suggestedHours": 2, "size": "small", "crowd": "高",
+      "coord": { "lng": 113.238, "lat": 23.113 },
+      "pois": [
+        { "name": "永庆坊主街", "type": "街区", "mustSee": true, "n": "n_yongqing_zhujie", "brief": "修旧如旧的西关骑楼街区" },
+        { "name": "粤剧艺术博物馆", "type": "看点", "mustSee": true, "n": "n_yongqing_yueju", "brief": "岭南园林式博物馆，戏台常年有演出" },
+        { "name": "李小龙祖居", "type": "看点", "brief": "功夫巨星祖辈的西关大屋" },
+        { "name": "恩宁路骑楼", "type": "街区", "brief": "「广州最美老街」的连续骑楼立面" }
+      ]
+    },
+    {
+      "id": "v_gulangyu", "cityId": "xiamen", "name": "鼓浪屿", "en": "Gulangyu Island",
+      "kind": "景区", "level": "5A", "worldHeritage": true,
+      "tags": ["自然", "人文", "世界遗产"],
+      "rating": 4.7, "heat": 95,
+      "summary": "万国建筑博物馆与「钢琴之岛」，联合国教科文组织世界文化遗产。日光岩登顶俯瞰全岛，菽庄花园四十四桥入海，老别墅深处咖啡馆与琴声交错。轮渡需提前预约，岛上全程步行。",
+      "highlights": ["日光岩", "菽庄花园", "皓月园", "风琴博物馆", "龙头路"],
+      "ticket": { "referencePriceCny": 50, "known": false, "note": "轮渡票 35-50 元往返（游客航线）；岛上核心景点联票约 90-100 元，均需预约，以官方公示为准" },
+      "openHours": { "text": "全天开放；景点约 08:00-18:00", "known": false },
+      "bestSeason": "4-6 月、9-11 月；避开台风季",
+      "suggestedHours": 5, "size": "large", "crowd": "极高",
+      "coord": { "lng": 118.067, "lat": 24.446 },
+      "pois": [
+        { "name": "日光岩", "type": "看点", "mustSee": true, "n": "n_gulang_riguang", "brief": "全岛最高点，郑成功屯兵处，观景第一峰" },
+        { "name": "菽庄花园", "type": "看点", "mustSee": true, "n": "n_gulang_shuzhuang", "brief": "「藏海」补山的滨海园林，四十四桥凌波" },
+        { "name": "皓月园", "type": "看点", "brief": "郑成功巨型石雕像临海矗立" },
+        { "name": "风琴博物馆（八卦楼）", "type": "看点", "mustSee": true, "brief": "中国唯一的古风琴专题博物馆" },
+        { "name": "龙头路商业街", "type": "街区", "brief": "岛上唯一的商业街，小吃与手信" }
+      ]
+    },
+    {
+      "id": "v_nanputuo", "cityId": "xiamen", "name": "南普陀寺", "en": "South Putuo Temple",
+      "kind": "寺庙", "level": "4A",
+      "tags": ["人文", "建筑"],
+      "rating": 4.7, "heat": 76,
+      "summary": "闽南佛教名刹，背依五老峰，紧邻厦门大学。天王殿、大雄宝殿、大悲殿沿中轴层层递升，后山登山步道半小时可俯瞰厦大与海。素饼与素斋有名，「佛跳墙」菜名源于此处一说流传甚广。",
+      "highlights": ["大悲殿", "天王殿", "五老峰步道", "素饼"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放（需预约入寺）；素饼约 10-20 元/盒（参考）" },
+      "openHours": { "text": "约 08:00-17:00", "known": false },
+      "bestSeason": "四季皆宜，清晨最清净",
+      "suggestedHours": 2, "size": "medium", "crowd": "高",
+      "coord": { "lng": 118.090, "lat": 24.438 },
+      "pois": [
+        { "name": "天王殿", "type": "看点", "n": "n_nanputuo_tianwang", "brief": "「南普陀」匾额与大肚弥勒笑迎香客" },
+        { "name": "大悲殿", "type": "看点", "mustSee": true, "n": "n_nanputuo_dabei", "brief": "八角三重飞檐的千手观音殿" },
+        { "name": "五老峰步道", "type": "看点", "mustSee": true, "brief": "寺后登山道，半小时到山顶看海" },
+        { "name": "素斋馆·素饼", "type": "服务", "brief": "百年素斋与伴手礼素饼" }
+      ]
+    },
+    {
+      "id": "v_huandaolu", "cityId": "xiamen", "name": "环岛路·曾厝垵", "en": "Island Ring Road & Zengcuoan",
+      "kind": "街区", "level": "3A",
+      "tags": ["自然", "街区", "美食"],
+      "rating": 4.5, "heat": 74,
+      "summary": "「最美环岛路」沿海而建，租一辆自行车从白城沙滩骑到曾厝垵，一侧是海一侧是绿荫；曾厝垵「中国最文艺渔村」的小巷里挤满了海鲜大排档与手作小店。",
+      "highlights": ["白城沙滩", "环岛骑行道", "曾厝垵文创村", "椰风寨"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放；自行车租赁约 20-40 元/小时（参考）" },
+      "openHours": { "text": "全天开放", "known": true },
+      "bestSeason": "4-6 月、9-11 月；日落时分最美",
+      "suggestedHours": 3, "size": "large", "crowd": "高",
+      "coord": { "lng": 118.110, "lat": 24.435 },
+      "pois": [
+        { "name": "白城沙滩", "type": "看点", "n": "n_huandao_baicheng", "brief": "厦大白城的公共沙滩，落日最佳" },
+        { "name": "环岛骑行道", "type": "看点", "mustSee": true, "n": "n_huandao_qixing", "brief": "依海而建的单车绿道，全程海风" },
+        { "name": "曾厝垵文创村", "type": "街区", "mustSee": true, "brief": "渔村小巷改造的文创美食村" },
+        { "name": "椰风寨", "type": "看点", "brief": "椰林沙滩，环岛路中段休憩点" }
+      ]
+    },
+    {
+      "id": "v_zhongshanlu", "cityId": "xiamen", "name": "中山路步行街", "en": "Zhongshan Road",
+      "kind": "街区", "level": "3A",
+      "tags": ["街区", "美食", "都市观光"],
+      "rating": 4.3, "heat": 70,
+      "summary": "厦门百年商业街，南洋风骑楼连绵成片，夜景灯光亮起时最有老厦门味道。支巷藏局口街、大中路，沙茶面、花生汤、烧肉粽的老字号都在附近；步行可达轮渡码头。",
+      "highlights": ["骑楼街", "局口街", "轮渡码头夜景"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放" },
+      "openHours": { "text": "全天开放；店铺约 10:00-22:30", "known": true },
+      "bestSeason": "四季皆宜，夜晚最热闹",
+      "suggestedHours": 2, "size": "small", "crowd": "高",
+      "coord": { "lng": 118.078, "lat": 24.457 },
+      "pois": [
+        { "name": "中山路主街", "type": "街区", "mustSee": true, "n": "n_zhongshan_zhujie", "brief": "南洋骑楼与百年商号的主街" },
+        { "name": "局口街", "type": "街区", "mustSee": true, "brief": "支巷美食密度之王，本地小吃聚集" },
+        { "name": "鹭江道·轮渡码头", "type": "看点", "brief": "隔海望鼓浪屿的夜景点位" }
+      ]
+    },
+    {
+      "id": "v_hongyadong", "cityId": "chongqing", "name": "洪崖洞·解放碑", "en": "Hongya Cave & Jiefangbei",
+      "kind": "街区", "level": "4A",
+      "tags": ["街区", "夜景", "美食"],
+      "rating": 4.7, "heat": 96,
+      "summary": "巴渝吊脚楼群的现代复活：11 层依山而建的吊脚楼亮灯后被称作「千与千寻同款」。顶层是马路、底层是江边路的山城魔幻在此具象化；步行可达解放碑——中国唯一纪念抗战胜利的纪念碑。",
+      "highlights": ["洪崖洞吊脚楼", "解放碑", "千厮门大桥", "八一好吃街"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放" },
+      "openHours": { "text": "全天开放；灯光约 18:30-23:00", "known": true },
+      "bestSeason": "四季皆宜；夜晚必看",
+      "suggestedHours": 2.5, "size": "medium", "crowd": "极高",
+      "coord": { "lng": 106.578, "lat": 29.563 },
+      "pois": [
+        { "name": "洪崖洞吊脚楼群", "type": "看点", "mustSee": true, "n": "n_hongya_diaojiaolou", "brief": "11 层木质吊脚楼群，夜景全国顶流" },
+        { "name": "解放碑", "type": "看点", "mustSee": true, "n": "n_hongya_jiefangbei", "brief": "抗战胜利纪功碑，重庆的城市原点" },
+        { "name": "千厮门大桥", "type": "看点", "mustSee": true, "brief": "拍洪崖洞全景的最佳位置" },
+        { "name": "八一好吃街", "type": "街区", "brief": "酸辣粉与山城汤圆的战场" }
+      ]
+    },
+    {
+      "id": "v_ciunikou", "cityId": "chongqing", "name": "磁器口古镇", "en": "Ciqikou",
+      "kind": "街区", "level": "4A",
+      "tags": ["街区", "人文", "美食"],
+      "rating": 4.4, "heat": 78,
+      "summary": "嘉陵江畔的千年水陆码头，「白日里千人拱手，入夜后万盏明灯」。石板路两旁陈麻花、古镇鸡杂香气扑鼻，宝轮寺香火千年未断，川剧变脸在茶馆里随时开演。",
+      "highlights": ["磁器口正街", "宝轮寺", "横街茶馆", "陈麻花"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放；个别展馆或收费" },
+      "openHours": { "text": "全天开放；店铺约 09:00-21:00", "known": true },
+      "bestSeason": "四季皆宜",
+      "suggestedHours": 2.5, "size": "medium", "crowd": "高",
+      "coord": { "lng": 106.451, "lat": 29.577 },
+      "pois": [
+        { "name": "磁器口正街", "type": "街区", "mustSee": true, "n": "n_ciqikou_zhengjie", "brief": "石板路主街，码头的百年喧闹" },
+        { "name": "宝轮寺", "type": "看点", "mustSee": true, "n": "n_ciqikou_baolunsi", "brief": "建文帝避难传说所在的千年古寺" },
+        { "name": "翰林院旧址", "type": "看点", "brief": "清代翰林旧宅，书香磁器口" },
+        { "name": "码头江岸", "type": "看点", "brief": "嘉陵江边看纤道与石阶" }
+      ]
+    },
+    {
+      "id": "v_eling", "cityId": "chongqing", "name": "鹅岭公园·二厂文创公园", "en": "Eling Park & Testbed 2",
+      "kind": "街区", "level": "3A",
+      "tags": ["街区", "夜景", "艺术"],
+      "rating": 4.5, "heat": 66,
+      "summary": "渝中半岛最高处的老公园，瞰胜楼（两江亭）可同时看长江嘉陵江；隔壁印刷厂改造的二厂文创公园是《从你的全世界路过》取景地，天台夜景与独立书店让人赖着不走。",
+      "highlights": ["瞰胜楼", "二厂天台", "鹅项山庄", "江山一览台"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费开放；瞰胜楼登楼约 5 元（参考）" },
+      "openHours": { "text": "公园约 07:00-22:00；二厂店铺约 10:00-22:00", "known": false },
+      "bestSeason": "四季皆宜；晴日黄昏最佳",
+      "suggestedHours": 2, "size": "small", "crowd": "中",
+      "coord": { "lng": 106.548, "lat": 29.557 },
+      "pois": [
+        { "name": "瞰胜楼", "type": "看点", "mustSee": true, "n": "n_eling_kansheng", "brief": "两江交汇的 360° 瞭望塔" },
+        { "name": "二厂文创公园", "type": "街区", "mustSee": true, "n": "n_eling_erchang", "brief": "老印刷厂的文艺转身，天台夜景网红" },
+        { "name": "江山一览台", "type": "看点", "brief": "公园内的观景平台" }
+      ]
+    },
+    {
+      "id": "v_changjiangsuodao", "cityId": "chongqing", "name": "长江索道", "en": "Yangtze River Cableway",
+      "kind": "服务", "level": "3A",
+      "tags": ["都市观光", "夜景"],
+      "rating": 4.6, "heat": 82,
+      "summary": "1987 年开通的「万里长江第一条空中走廊」，四分钟的跨江飞行从渝中到南岸，脚下车流江水，肉眼可见的立体重庆。排长队是常态，建议线上预约错峰乘坐。",
+      "highlights": ["新华路北站", "上新街南站", "跨江夜景"],
+      "ticket": { "referencePriceCny": 20, "known": false, "note": "单程 20 元 / 往返 30 元（参考），需预约，以官方公示为准" },
+      "openHours": { "text": "约 08:00-22:00", "known": false },
+      "bestSeason": "四季皆宜；晴夜视野最佳",
+      "suggestedHours": 1, "size": "small", "crowd": "极高",
+      "coord": { "lng": 106.586, "lat": 29.556 },
+      "pois": [
+        { "name": "新华路北站（渝中）", "type": "门区", "mustSee": true, "n": "n_suodao_beizhan", "brief": "长江索道起点，排队最长的地方" },
+        { "name": "跨江轿厢", "type": "看点", "mustSee": true, "brief": "四分钟空中跨江，选靠窗位置" },
+        { "name": "上新街南站（南岸）", "type": "门区", "brief": "下站后可转龙门浩老街" }
+      ]
+    },
+    {
+      "id": "v_shouxihu", "cityId": "yangzhou", "name": "瘦西湖", "en": "Slender West Lake",
+      "kind": "园林", "level": "5A", "worldHeritage": true,
+      "tags": ["自然", "人文", "世界遗产"],
+      "rating": 4.8, "heat": 84,
+      "summary": "「两堤花柳全依水，一路楼台直到山」。湖道蜿蜒如带，五亭桥黄瓦朱柱映水，二十四桥仍在。清代盐商为迎圣驾营造的湖上园林，摇橹船穿桥洞是标准体验，烟花三月最盛。",
+      "highlights": ["五亭桥", "二十四桥", "白塔", "钓鱼台", "万花园"],
+      "ticket": { "referencePriceCny": 100, "known": false, "note": "旺季约 100 元，淡季与节庆不同，以官方公示为准" },
+      "openHours": { "text": "约 07:30-17:30（夜游季延长）", "known": false },
+      "bestSeason": "3-5 月琼花柳絮；夜游灯光季",
+      "suggestedHours": 3, "size": "large", "crowd": "高",
+      "coord": { "lng": 119.415, "lat": 32.421 },
+      "pois": [
+        { "name": "五亭桥", "type": "看点", "mustSee": true, "n": "n_shouxi_wuting", "brief": "莲花桥，五亭十五洞，扬州的城市徽章" },
+        { "name": "二十四桥", "type": "看点", "mustSee": true, "n": "n_shouxi_ershisiquiao", "brief": "「二十四桥明月夜」的诗意本体" },
+        { "name": "白塔", "type": "看点", "brief": "「一夜造塔」传说里的藏式白塔" },
+        { "name": "钓鱼台", "type": "看点", "mustSee": true, "brief": "月洞门框景五亭桥与白塔的经典机位" },
+        { "name": "徐园", "type": "看点", "brief": "入园第一个园中园，听鹂馆" }
+      ]
+    },
+    {
+      "id": "v_geyuan", "cityId": "yangzhou", "name": "个园", "en": "Ge Garden",
+      "kind": "园林", "level": "4A", "worldHeritage": true,
+      "tags": ["建筑", "人文", "世界遗产"],
+      "rating": 4.7, "heat": 66,
+      "summary": "清代盐商黄至筠的家宅园林，园主爱竹，「个」字即竹叶之形。四季假山用不同石料堆出春夏秋冬四景，是国内孤例；东路楠木厅、中路住宅与西路清美堂再现盐商人家格局。",
+      "highlights": ["四季假山", "楠木厅", "清美堂", "竹林"],
+      "ticket": { "referencePriceCny": 45, "known": false, "note": "约 45 元（旺季），以官方公示为准" },
+      "openHours": { "text": "约 07:30-17:30", "known": false },
+      "bestSeason": "四季皆宜——四季假山按季看更有味",
+      "suggestedHours": 2, "size": "medium", "crowd": "中",
+      "coord": { "lng": 119.429, "lat": 32.401 },
+      "pois": [
+        { "name": "春山（四季假山·春）", "type": "看点", "mustSee": true, "n": "n_geyuan_sijijia", "brief": "石笋破土配修竹，春意从门外开始" },
+        { "name": "夏山（四季假山·夏）", "type": "看点", "mustSee": true, "n": "n_geyuan_xiashan", "brief": "太湖石叠山抱池，曲桥入洞" },
+        { "name": "秋山（四季假山·秋）", "type": "看点", "mustSee": true, "n": "n_geyuan_qiushan", "brief": "黄山石堆叠，立体迷宫登高望秋" },
+        { "name": "冬山（四季假山·冬）", "type": "看点", "mustSee": true, "brief": "宣石如雪，壁上二十四风音洞" },
+        { "name": "楠木厅", "type": "看点", "brief": "盐商宅第的主厅，金丝楠木构" }
+      ]
+    },
+    {
+      "id": "v_dongguanjie", "cityId": "yangzhou", "name": "东关街历史街区", "en": "Dongguan Street",
+      "kind": "街区", "level": "4A",
+      "tags": ["街区", "美食", "人文"],
+      "rating": 4.4, "heat": 70,
+      "summary": "从东关古渡到国庆路的千年老街，运河时代的繁华余温犹在。青砖黛瓦间谢馥春香粉店、三把刀体验馆与酱油铺子依旧营业，夜幕下灯笼亮起，烫干丝与四喜汤圆正香。",
+      "highlights": ["东关主街", "东关古渡", "个园南门", "武当行宫"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "街区免费；个别景点收费" },
+      "openHours": { "text": "全天开放；店铺约 09:00-22:00", "known": true },
+      "bestSeason": "四季皆宜，傍晚入夜最雅",
+      "suggestedHours": 2, "size": "small", "crowd": "高",
+      "coord": { "lng": 119.435, "lat": 32.397 },
+      "pois": [
+        { "name": "东关主街", "type": "街区", "mustSee": true, "n": "n_dongguan_zhujie", "brief": "1122 米长街，扬州最市井的一段" },
+        { "name": "东关古渡", "type": "看点", "n": "n_dongguan_gudu", "brief": "古运河码头，夜游运河船班在此" },
+        { "name": "谢馥春", "type": "看点", "brief": "创立于 1830 年的香粉老字号" },
+        { "name": "逸圃·武当行宫", "type": "看点", "brief": "深巷里的盐商宅园与道观" }
+      ]
+    },
+    {
+      "id": "v_longmen", "cityId": "luoyang", "name": "龙门石窟", "en": "Longmen Grottoes",
+      "kind": "景区", "level": "5A", "worldHeritage": true,
+      "tags": ["人文", "世界遗产", "石窟造像"],
+      "rating": 4.9, "heat": 90,
+      "summary": "伊水两岸两山对峙如门阙，北魏至唐的十万余尊造像凿刻四百年。卢舍那大佛「东方蒙娜丽莎」的微笑是巅峰之作，奉先寺、万佛洞、古阳洞层层递进。建议下午入园，夜场灯光别有庄严。",
+      "highlights": ["奉先寺卢舍那大佛", "万佛洞", "古阳洞", "香山寺", "白园"],
+      "ticket": { "referencePriceCny": 90, "known": false, "note": "约 90 元（含西山、东山、香山寺、白园），夜场另计，以官方公示为准" },
+      "openHours": { "text": "约 08:00-18:30；夜场开放至 21:30 前后（季节性）", "known": false },
+      "bestSeason": "4 月牡丹花会；秋季天高云淡",
+      "suggestedHours": 4, "size": "large", "crowd": "高",
+      "coord": { "lng": 112.472, "lat": 34.559 },
+      "pois": [
+        { "name": "奉先寺（卢舍那大佛）", "type": "看点", "mustSee": true, "n": "n_longmen_lushena", "brief": "17 米高的大佛，唐代造像艺术巅峰" },
+        { "name": "万佛洞", "type": "看点", "mustSee": true, "n": "n_longmen_wanfo", "brief": "一万五千尊小佛铺满洞壁的盛唐洞窟" },
+        { "name": "古阳洞", "type": "看点", "mustSee": true, "n": "n_longmen_guyang", "brief": "开凿最早的洞窟，「龙门二十品」书法宝库" },
+        { "name": "香山寺", "type": "看点", "brief": "东山之上，白居易晚年号「香山居士」" },
+        { "name": "白园", "type": "看点", "brief": "白居易墓园，诗廊与琵琶峰" }
+      ]
+    },
+    {
+      "id": "v_baimasi", "cityId": "luoyang", "name": "白马寺", "en": "White Horse Temple",
+      "kind": "寺庙", "level": "4A",
+      "tags": ["人文", "建筑"],
+      "rating": 4.7, "heat": 62,
+      "summary": "始建于东汉永平十一年（公元 68 年），中国第一座官办寺院，「中国佛教的祖庭」。山门前的石马、齐云塔与清凉台是原址看点；东侧国际佛殿苑的印度、泰国、缅甸风格佛殿同框罕见。",
+      "highlights": ["天王殿·大雄殿", "齐云塔", "国际佛殿苑", "清凉台"],
+      "ticket": { "referencePriceCny": 35, "known": false, "note": "约 35 元，以官方公示为准" },
+      "openHours": { "text": "约 07:30-18:00", "known": false },
+      "bestSeason": "四季皆宜；秋日银杏最上镜",
+      "suggestedHours": 2.5, "size": "medium", "crowd": "中",
+      "coord": { "lng": 112.578, "lat": 34.728 },
+      "pois": [
+        { "name": "山门与石马", "type": "看点", "mustSee": true, "n": "n_baima_shanmen", "brief": "「白马驮经」故事的入口" },
+        { "name": "大雄殿", "type": "看点", "mustSee": true, "n": "n_baima_daxiong", "brief": "元代夹纻干漆造像在此列坐" },
+        { "name": "齐云塔", "type": "看点", "mustSee": true, "n": "n_baima_qiyunta", "brief": "十三层密檐式砖塔，塔音如蛙鸣" },
+        { "name": "国际佛殿苑", "type": "看点", "mustSee": true, "brief": "印、泰、缅、日风格佛殿的国际同框" }
+      ]
+    },
+    {
+      "id": "v_luoyigu", "cityId": "luoyang", "name": "洛邑古城", "en": "Luoyi Ancient City",
+      "kind": "街区", "level": "4A",
+      "tags": ["街区", "夜景", "人文"],
+      "rating": 4.5, "heat": 76,
+      "summary": "以文峰塔为核心重建的古城街区，是「汉服之城」洛阳最出片的夜场：满城汉服襦裙映着灯楼水榭，仿佛沉浸式穿越。周三前需预约免费入园，夜景 18:30 后最佳。",
+      "highlights": ["文峰塔", "新潭水景", "汉服夜景", "非遗工坊"],
+      "ticket": { "referencePriceCny": 0, "known": true, "note": "免费但需实名预约（限流）" },
+      "openHours": { "text": "约 09:00-22:00（灯光夜场为主打）", "known": false },
+      "bestSeason": "四季皆宜；牡丹花会期间人气最高",
+      "suggestedHours": 2.5, "size": "medium", "crowd": "极高",
+      "coord": { "lng": 112.478, "lat": 34.672 },
+      "pois": [
+        { "name": "文峰塔", "type": "看点", "mustSee": true, "n": "n_luoyi_wenfeng", "brief": "清初重修的密檐式文峰塔，古城地标" },
+        { "name": "新潭水景", "type": "看点", "mustSee": true, "brief": "水榭灯楼倒影，夜景核心机位" },
+        { "name": "非遗百戏楼", "type": "看点", "mustSee": true, "brief": "唐风戏台，夜间演出不断" },
+        { "name": "汉服体验街", "type": "服务", "brief": "租妆造一条龙，夜游古城" }
+      ]
+    }
+  ]
+}

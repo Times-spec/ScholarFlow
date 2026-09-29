@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>随行 · 管理后台</title>
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>" />
+</head>
+<body>
+  <div id="admin-app">
+    <aside id="admin-side">
+      <div class="side-brand">🧭 随行管理台</div>
+      <nav id="side-nav">
+        <button class="side-btn active" data-tab="overview">📊 数据看板</button>
+        <button class="side-btn" data-tab="content">📚 内容管理</button>
+        <button class="side-btn" data-tab="orders">🧾 订单管理</button>
+        <button class="side-btn" data-tab="users">👥 用户会话</button>
+        <button class="side-btn" data-tab="data">🗄 数据运维</button>
+      </nav>
+      <div class="side-foot">
+        <a href="/" target="_blank">打开前台 ↗</a>
+        <button id="logout-btn" class="linkish">退出登录</button>
+      </div>
+    </aside>
+    <main id="admin-main">
+      <div id="login-view" class="login-view">
+        <div class="login-card">
+          <h2>🧭 随行 · 管理后台</h2>
+          <p class="muted">请输入管理令牌。令牌来源：环境变量 <code>ADMIN_TOKEN</code> &gt; <code>config.json</code> 的 <code>admin.token</code> &gt; 服务器首次启动自动生成（见服务器控制台或 <code>data/admin-token.txt</code>）。</p>
+          <input id="token-input" type="password" class="input" placeholder="管理令牌" />
+          <button id="login-btn" class="btn btn-primary">登录</button>
+          <p id="login-err" class="err hidden"></p>
+        </div>
+      </div>
+      <div id="main-view" class="hidden"></div>
+    </main>
+  </div>
+  <div id="modal" class="modal hidden"><div class="modal-mask"></div><div class="modal-body" id="modal-body"></div></div>
+  <div id="admin-toast" class="a-toast hidden"></div>
+  <script type="module" src="/js/admin.js"></script>
+</body>
+</html>

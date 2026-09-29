@@ -1,0 +1,12 @@
+// 顶层构建脚本：随行 Smart Tour（纯 Java + AGP，无第三方运行时依赖）
+buildscript {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.7.3'
+    }
+}

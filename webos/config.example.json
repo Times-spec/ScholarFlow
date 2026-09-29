@@ -1,0 +1,30 @@
+{
+  "port": 8080,
+  "amap": {
+    "jsKey": "",
+    "jsSecurityCode": "",
+    "webServiceKey": ""
+  },
+  "llm": {
+    "baseUrl": "",
+    "apiKey": "",
+    "model": ""
+  },
+  "asr": {
+    "baseUrl": "",
+    "apiKey": ""
+  },
+  "tts": {
+    "baseUrl": "",
+    "apiKey": ""
+  },
+  "limits": {
+    "maxPoiCandidates": 24,
+    "maxRoutingCalls": 60,
+    "maxLlmTokens": 4000,
+    "maxWallTimeSec": 45
+  },
+  "admin": {
+    "token": ""
+  }
+}

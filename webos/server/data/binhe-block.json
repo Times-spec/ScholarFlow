@@ -1,0 +1,190 @@
+{
+  "venue": {
+    "id": "block_binhe",
+    "name": "滨河片区",
+    "nameNote": "演示·虚构街区候选池，用于'随便逛逛'场景，不是真实出游推荐",
+    "city": "成都市(演示)",
+    "timezone": "Asia/Shanghai",
+    "packVersion": "demo-2026.09.1",
+    "coverageScope": { "kind": "poi", "scopeLabel": "已收录的 11 个街区候选点" },
+    "center": { "lng": 104.058, "lat": 30.6578, "crs": "GCJ02" },
+    "entrances": ["hub_plaza"],
+    "openWindows": [["00:00", "24:00"]],
+    "dataNote": "坐标系 GCJ02(演示标注)；路网为简化街区折线"
+  },
+  "nodes": [
+    { "id": "hub_plaza", "name": "滨河广场", "type": "entrance", "lng": 104.055, "lat": 30.657, "status": "open" },
+    { "id": "j_r1", "name": "滨河路口", "type": "junction", "lng": 104.055, "lat": 30.658352, "status": "open" },
+    { "id": "poi_greenway", "name": "滨河绿道", "type": "poi", "lng": 104.055, "lat": 30.659704, "status": "open" },
+    { "id": "poi_lbridge", "name": "安澜廊桥", "type": "poi", "lng": 104.057088, "lat": 30.659884, "status": "open" },
+    { "id": "poi_bookstore", "name": "旧书屋", "type": "poi", "lng": 104.056879, "lat": 30.658082, "status": "open" },
+    { "id": "poi_cafe", "name": "河岸咖啡", "type": "poi", "lng": 104.05834, "lat": 30.658623, "status": "open" },
+    { "id": "poi_gallery", "name": "社区美术馆", "type": "poi", "lng": 104.059384, "lat": 30.659344, "status": "open" },
+    { "id": "poi_market", "name": "青阳菜场", "type": "poi", "lng": 104.058131, "lat": 30.656279, "status": "open" },
+    { "id": "poi_wall", "name": "老城墙遗址", "type": "poi", "lng": 104.060219, "lat": 30.657541, "status": "open" },
+    { "id": "poi_batea", "name": "坝坝茶馆", "type": "poi", "lng": 104.056566, "lat": 30.655648, "status": "open" },
+    { "id": "poi_flower", "name": "花市巷", "type": "poi", "lng": 104.058964, "lat": 30.655918, "status": "open" },
+    { "id": "poi_bakery", "name": "窑烤面包店", "type": "poi", "lng": 104.060428, "lat": 30.656459, "status": "open" },
+    { "id": "poi_riverpark", "name": "河湾小公园", "type": "poi", "lng": 104.061263, "lat": 30.658803, "status": "open" }
+  ],
+  "edges": [
+    { "id": "b01", "from": "hub_plaza", "to": "j_r1", "lengthM": 150, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b02", "from": "j_r1", "to": "poi_greenway", "lengthM": 150, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b03", "from": "poi_greenway", "to": "poi_lbridge", "lengthM": 201, "walkAllowed": true, "bikeAllowed": false, "steps": 8, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b04", "from": "j_r1", "to": "poi_bookstore", "lengthM": 183, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b05", "from": "poi_bookstore", "to": "poi_cafe", "lengthM": 152, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b06", "from": "poi_lbridge", "to": "poi_gallery", "lengthM": 228, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b07", "from": "poi_cafe", "to": "poi_gallery", "lengthM": 128, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b08", "from": "hub_plaza", "to": "poi_batea", "lengthM": 212, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b09", "from": "hub_plaza", "to": "poi_market", "lengthM": 310, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b10", "from": "poi_market", "to": "poi_flower", "lengthM": 89, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b11", "from": "poi_flower", "to": "poi_bakery", "lengthM": 152, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b12", "from": "poi_market", "to": "poi_wall", "lengthM": 244, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b13", "from": "poi_wall", "to": "poi_bakery", "lengthM": 122, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b14", "from": "poi_wall", "to": "poi_riverpark", "lengthM": 172, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b15", "from": "poi_gallery", "to": "poi_riverpark", "lengthM": 190, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b16", "from": "poi_batea", "to": "poi_market", "lengthM": 166, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b17", "from": "poi_cafe", "to": "poi_wall", "lengthM": 216, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] },
+    { "id": "b18", "from": "poi_lbridge", "to": "poi_cafe", "lengthM": 216, "walkAllowed": true, "bikeAllowed": false, "steps": 0, "stepsKnown": true, "closed": false, "evidenceIds": ["ev_binhe_survey"] }
+  ],
+  "pois": [
+    {
+      "id": "poi_greenway", "name": "滨河绿道", "entranceNode": "poi_greenway",
+      "tags": ["自然"], "indoor": false, "scenic": 0.8,
+      "dwellMinSec": 600, "dwellSec": 1200, "openWindows": [["00:00", "24:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "沿河而建的步行绿道，水面开阔，适合慢慢走。",
+        "shortScript": "滨河绿道沿着河岸延伸，一侧是水、一侧是绿化，是这个片区最适合'放空走一段'的地方。傍晚河面反光柔和，散步体验最好。",
+        "detail": "滨河绿道为开放式滨水步道，全天开放，路面平整。沿绿道向北可到达安澜廊桥。",
+        "claims": [{ "text": "滨河绿道为开放式滨水步道，全天开放", "evidenceId": "ev_binhe_survey" }]
+      }
+    },
+    {
+      "id": "poi_lbridge", "name": "安澜廊桥", "entranceNode": "poi_lbridge",
+      "tags": ["建筑", "人文"], "indoor": false, "scenic": 0.75,
+      "dwellMinSec": 600, "dwellSec": 900, "openWindows": [["00:00", "24:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "带顶的步行廊桥，桥内凉快，可看河两岸。",
+        "shortScript": "安澜廊桥是一座带顶的步行廊桥，桥上能同时看到上下游两岸。桥内有长凳，走累了可以坐一会儿。桥头有 8 级台阶。",
+        "detail": "安澜廊桥为带顶步行桥，连接绿道与北岸街区。桥头有 8 级台阶（已核验），推行婴儿车需注意。",
+        "claims": [{ "text": "安澜廊桥桥头有 8 级台阶", "evidenceId": "ev_binhe_survey" }]
+      }
+    },
+    {
+      "id": "poi_bookstore", "name": "旧书屋", "entranceNode": "poi_bookstore",
+      "tags": ["人文", "街区"], "indoor": true, "scenic": 0.6,
+      "dwellMinSec": 600, "dwellSec": 1200, "openWindows": [["10:00", "21:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "二手旧书店，店小书密，适合翻上二十分钟。",
+        "shortScript": "旧书屋是一家二手书店，门面不大但书架顶到天花板。旧杂志、老版本小说和本地文史类居多，慢慢翻容易有意外收获。",
+        "detail": "旧书屋经营二手书籍，营业时间为 10:00-21:00。店内空间紧凑，雨天是不错的室内停留点。",
+        "claims": [{ "text": "旧书屋营业时间为 10:00-21:00", "evidenceId": "ev_binhe_survey" }]
+      }
+    },
+    {
+      "id": "poi_cafe", "name": "河岸咖啡", "entranceNode": "poi_cafe",
+      "tags": ["美食"], "indoor": true, "scenic": 0.55,
+      "dwellMinSec": 900, "dwellSec": 1500, "openWindows": [["10:00", "22:00"]],
+      "ticketCny": 35, "ticketKnown": true, "costNote": "人均约 35 元", "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "河景座位的咖啡店，人均约 35 元。",
+        "shortScript": "河岸咖啡的卖点是临河的座位。下午阳光斜照时河景位很抢手。人均消费大约 35 元，歇脚、躲雨都合适。",
+        "detail": "河岸咖啡营业时间为 10:00-22:00，人均约 35 元（已核验）。室内座位为主，适合作为行程中的休息站。",
+        "claims": [{ "text": "河岸咖啡人均约 35 元，营业时间 10:00-22:00", "evidenceId": "ev_binhe_survey" }]
+      }
+    },
+    {
+      "id": "poi_gallery", "name": "社区美术馆", "entranceNode": "poi_gallery",
+      "tags": ["人文", "建筑"], "indoor": true, "scenic": 0.7,
+      "dwellMinSec": 1200, "dwellSec": 1800, "openWindows": [["10:00", "12:00"], ["14:00", "18:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "免票的社区美术馆，注意中午闭馆两小时。",
+        "shortScript": "社区美术馆免费开放，常年有本地艺术家的轮换展览。展厅不大，半小时能看完。注意中午 12 点到下午 2 点闭馆，别扑空。",
+        "detail": "社区美术馆免票开放，开放时段为 10:00-12:00 与 14:00-18:00，中午闭馆。展览以本地艺术轮换展为主。",
+        "claims": [{ "text": "社区美术馆开放时段为 10:00-12:00 与 14:00-18:00", "evidenceId": "ev_binhe_survey" }]
+      }
+    },
+    {
+      "id": "poi_market", "name": "青阳菜场", "entranceNode": "poi_market",
+      "tags": ["美食", "街区"], "indoor": true, "scenic": 0.5,
+      "dwellMinSec": 600, "dwellSec": 1200, "openWindows": [["07:00", "13:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "上午才热闹的菜市场，小吃摊集中在入口一排。",
+        "shortScript": "青阳菜场是这个片区最有烟火气的地方，上午最热闹，下午 1 点后陆续收摊。入口一排是小吃摊，肥肠粉和锅盔是人气最高的两个。",
+        "detail": "青阳菜场营业高峰为 07:00-13:00，午后基本收摊。市场内小吃摊位集中，适合感受本地日常。",
+        "claims": [{ "text": "青阳菜场主要营业时段为 07:00-13:00", "evidenceId": "ev_binhe_survey" }]
+      }
+    },
+    {
+      "id": "poi_wall", "name": "老城墙遗址", "entranceNode": "poi_wall",
+      "tags": ["人文", "建筑"], "indoor": false, "scenic": 0.65,
+      "dwellMinSec": 600, "dwellSec": 900, "openWindows": [["00:00", "24:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "一段保留的老城墙，有解说牌，十分钟能看完。",
+        "shortScript": "这段老城墙是街区里留存的历史遗迹，墙体能看出不同时期修补的痕迹。旁边有解说牌，介绍了城墙的沿革。顺路值得停留十来分钟。",
+        "detail": "老城墙遗址为露天保留遗迹，全天开放，配有解说牌。遗址不可攀爬。",
+        "claims": [{ "text": "老城墙遗址为露天开放遗迹，全天可参观", "evidenceId": "ev_binhe_survey" }]
+      }
+    },
+    {
+      "id": "poi_batea", "name": "坝坝茶馆", "entranceNode": "poi_batea",
+      "tags": ["美食", "人文"], "indoor": false, "scenic": 0.6,
+      "dwellMinSec": 900, "dwellSec": 1800, "openWindows": [["08:00", "20:00"]],
+      "ticketCny": null, "ticketKnown": false, "costNote": "消费价格未核验", "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "露天坝坝茶，竹椅一摆就是一下午。",
+        "shortScript": "坝坝茶馆是露天的老式茶座，竹椅子摆在树荫下，本地人一坐一下午。消费价格我们没有核验，以现场公示为准。雨天不建议安排这一站。",
+        "detail": "坝坝茶馆为露天茶座，营业时间 08:00-20:00。价格未核验（已标注）。露天场所，降雨天气不适合。",
+        "claims": [
+          { "text": "坝坝茶馆营业时间为 08:00-20:00", "evidenceId": "ev_binhe_survey" },
+          { "text": "坝坝茶馆消费价格未核验", "evidenceId": "ev_binhe_survey" }
+        ]
+      }
+    },
+    {
+      "id": "poi_flower", "name": "花市巷", "entranceNode": "poi_flower",
+      "tags": ["街区"], "indoor": false, "scenic": 0.55,
+      "dwellMinSec": 600, "dwellSec": 900, "openWindows": [["09:00", "18:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "窄巷子里的花市，拍照好看，走一圈十分钟。",
+        "shortScript": "花市巷是一条窄巷，两侧都是鲜花绿植摊，颜色很满，适合拍照。巷子不长，慢慢走一圈十来分钟。",
+        "detail": "花市巷为花卉摊位集中的街巷，摊位营业时间约为 09:00-18:00。",
+        "claims": [{ "text": "花市巷摊位营业时间约为 09:00-18:00", "evidenceId": "ev_binhe_survey" }]
+      }
+    },
+    {
+      "id": "poi_bakery", "name": "窑烤面包店", "entranceNode": "poi_bakery",
+      "tags": ["美食"], "indoor": true, "scenic": 0.5,
+      "dwellMinSec": 600, "dwellSec": 900, "openWindows": [["08:30", "20:00"]],
+      "ticketCny": 25, "ticketKnown": true, "costNote": "人均约 25 元", "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "现烤欧包的小店，下午三四点出炉最香。",
+        "shortScript": "窑烤面包店用传统石窑烤面包，下午出炉时段香味能飘到巷口。人均 25 元左右，可以买一份当路上的干粮。",
+        "detail": "窑烤面包店营业时间 08:30-20:00，人均约 25 元（已核验）。",
+        "claims": [{ "text": "窑烤面包店营业时间 08:30-20:00，人均约 25 元", "evidenceId": "ev_binhe_survey" }]
+      }
+    },
+    {
+      "id": "poi_riverpark", "name": "河湾小公园", "entranceNode": "poi_riverpark",
+      "tags": ["自然"], "indoor": false, "scenic": 0.6,
+      "dwellMinSec": 600, "dwellSec": 1200, "openWindows": [["00:00", "24:00"]],
+      "ticketCny": 0, "ticketKnown": true, "reservation": "none", "hoursEvidenceIds": ["ev_binhe_survey"],
+      "guide": {
+        "summary": "河湾处的社区小公园，有大草坪和健身器材。",
+        "shortScript": "河湾小公园不大，但有一片朝向河湾的草坪，是看河转弯的好地方。本地居民傍晚在这里锻炼，很有生活气息。",
+        "detail": "河湾小公园为开放式社区公园，全天开放，草坪朝向河湾。",
+        "claims": [{ "text": "河湾小公园为开放式社区公园", "evidenceId": "ev_binhe_survey" }]
+      }
+    }
+  ],
+  "evidence": [
+    { "id": "ev_binhe_survey", "sourceTitle": "滨河片区候选池人工整理（演示）", "sourceUrl": "fixture://venue-packs/binhe/survey-2026-09-15", "retrievedAt": "2026-09-15T10:00:00+08:00", "effectiveFrom": "2026-09-15", "expiresAt": null, "license": "自有采集(演示)", "reviewStatus": "reviewed" }
+  ]
+}

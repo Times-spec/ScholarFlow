@@ -1,0 +1,42 @@
+[Unit]
+Description=Smart Tour Assistant (Node.js, zero-dependency web app)
+Documentation=file:/opt/smart-tour/部署与启动指南.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# 改成你的实际部署路径与运行用户
+WorkingDirectory=/opt/smart-tour
+User=www-data
+Group=www-data
+
+# 端口与密钥：推荐用环境变量注入，config.json 里留空
+Environment=NODE_ENV=production
+Environment=PORT=8080
+# Environment=AMAP_WS_KEY=你的高德Web服务Key
+# Environment=AMAP_JS_KEY=你的高德JSKey
+# Environment=AMAP_JS_SECRET=你的高德安全密钥
+# Environment=LLM_BASE_URL=https://api.deepseek.com/v1
+# Environment=LLM_API_KEY=你的LLM密钥
+# Environment=LLM_MODEL=deepseek-chat
+
+ExecStart=/usr/bin/node server/index.js
+
+# 崩溃自动拉起
+Restart=always
+RestartSec=3
+
+# 日志进入 journald：journalctl -u smart-tour -f
+StandardOutput=journal
+StandardError=journal
+
+# 基础加固
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/smart-tour/data
+
+[Install]
+WantedBy=multi-user.target
