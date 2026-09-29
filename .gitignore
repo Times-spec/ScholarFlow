@@ -27,3 +27,4 @@ webos/android/app/build/
 # ===== 系统杂项 =====
 .DS_Store
 Thumbs.db
+.zcode/
