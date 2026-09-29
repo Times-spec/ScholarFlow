@@ -1,4 +1,4 @@
-// 随行 · 管理后台 SPA（无构建步骤，原生 ES Module）
+// 漫游有解 · 管理后台 SPA（无构建步骤，原生 ES Module）
 const TOKEN_KEY = 'st_admin_token';
 const $ = (sel) => document.querySelector(sel);
 

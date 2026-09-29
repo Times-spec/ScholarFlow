@@ -75,7 +75,7 @@ async function main() {
     bridgeReady: !!window.__suixingGeoInstalled,
     hash: location.hash
   })`));
-  check('APK 内加载的是随行应用', state.hasApp && state.title.includes('随行'), JSON.stringify(state));
+  check('APK 内加载的是漫游有解应用', state.hasApp && state.title.includes('漫游有解'), JSON.stringify(state));
   check('注入的原生能力可用', state.bridge && state.bridgeReady);
   check('极简首页结构（场景胶囊 + 条件胶囊）', state.pills === 2 && state.conds >= 4, JSON.stringify(state));
 

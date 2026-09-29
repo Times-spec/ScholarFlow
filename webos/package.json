@@ -2,7 +2,7 @@
   "name": "smart-tour-webos",
   "version": "1.0.0",
   "private": true,
-  "description": "随行 · 大型导游平台 — 内容中心 + 城市行程 + 导游市场 + 现场游览助手（零依赖单仓）",
+  "description": "漫游有解——多约束动态游览路线规划智能体 — 内容中心 + 城市行程 + 导游市场 + 现场游览助手（零依赖单仓）",
   "type": "commonjs",
   "engines": {
     "node": ">=18"

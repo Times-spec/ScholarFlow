@@ -125,7 +125,7 @@ server.on('error', (err) => {
 });
 
 server.listen(cfg.port, () => {
-  console.log(`[smart-tour] 智能游览助手已启动: http://localhost:${cfg.port}`);
+  console.log(`[smart-tour] 漫游有解（多约束动态游览路线规划智能体）已启动: http://localhost:${cfg.port}`);
   console.log(`[smart-tour] 导游平台: 内容库 ${content.getMeta().counts.cities} 城 / ${content.getMeta().counts.venues} 场所 / ${content.getMeta().counts.narrations} 条讲解（library_v1，未实地核验）`);
   console.log(`[smart-tour] 管理后台: http://localhost:${cfg.port}/admin.html （令牌来源: ${adminAuth.source}${adminAuth.source === 'generated-file' ? '，已写入 data/admin-token.txt' : ''}）`);
   if (adminAuth.source === 'generated-file' || adminAuth.source === 'ephemeral') {

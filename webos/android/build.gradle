@@ -1,4 +1,4 @@
-// 顶层构建脚本：随行 Smart Tour（纯 Java + AGP，无第三方运行时依赖）
+// 顶层构建脚本：漫游有解 Smart Tour（纯 Java + AGP，无第三方运行时依赖）
 buildscript {
     repositories {
         maven { url 'https://maven.aliyun.com/repository/google' }

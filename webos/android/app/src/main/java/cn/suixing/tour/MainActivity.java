@@ -29,7 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * 随行 · 智能游览助手（Android 壳）
+ * 漫游有解——多约束动态游览路线规划智能体（Android 壳）
  *
  * 设计取舍：
  * - WebView 保证与服务端 100% 功能对等（规划、地图、讲解、回顾都在里面）；

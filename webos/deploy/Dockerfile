@@ -1,4 +1,4 @@
-# 随行 · 智能游览助手 —— 零依赖运行镜像
+# 漫游有解——多约束动态游览路线规划智能体（零依赖运行镜像）
 # 构建：docker build -t smart-tour:0.1.0 -f deploy/Dockerfile .
 # 运行：docker run -d --name smart-tour -p 8080:8080 -v $(pwd)/data:/app/data \
 #         -e AMAP_WS_KEY=xxx -e AMAP_JS_KEY=xxx -e AMAP_JS_SECRET=xxx \
