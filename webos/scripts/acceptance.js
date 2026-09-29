@@ -130,12 +130,15 @@ async function main() {
       const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(9, 0, 0, 0);
       const r = await makePlan(T, baseForm({ stepFreeRequired: true, mustVisitIds: ['poi_tower', 'poi_bonsai'], startMode: 'later', startAtMs: d.getTime() }), '');
       const v = r.plan.versions[0];
-      const sf = v.constraints.find((c) => c.key === 'step_free_required');
+      const sf = v && v.constraints.find((c) => c.key === 'step_free_required');
+      const explicitConflict = !v
+        && ['infeasible', 'needs_clarification'].includes(r.plan.plan.status)
+        && r.plan.plan.conflict;
       const ok = sf && (sf.result === 'pass' || sf.result === 'unknown' || sf.result === 'fail')
         && (sf.result !== 'unknown' || v.status === 'conditional')
         && (sf.result !== 'fail' || v.status === 'infeasible');
-      check('轮椅硬条件下台阶未知不标 verified', ok && (sf.result !== 'unknown' || v.status !== 'verified'),
-        v.status + ' ' + JSON.stringify(sf));
+      check('轮椅硬条件下台阶未知不标 verified', explicitConflict || (ok && (sf.result !== 'unknown' || v.status !== 'verified')),
+        v ? `${v.status} ${JSON.stringify(sf)}` : JSON.stringify(r.plan.plan.conflict));
     }
 
     // 用例 7：想全览但时间不足 → 显示覆盖范围与冲突，不承诺全部（§19.1-8）
@@ -154,8 +157,13 @@ async function main() {
       const r = await makePlan(T, baseForm({ mustVisitIds: ['poi_island'] }), '');
       const v = r.plan.versions[0];
       const conflict = r.plan.plan.conflict;
-      check('死胡同必去不发布回头路方案', !v && r.plan.plan.status === 'infeasible'
-        && conflict && conflict.code === 'NO_NON_REPEATING_ROUTE', JSON.stringify(conflict));
+      const proposals = r.plan.plan.agentProposals || [];
+      const terminalStatus = r.plan.plan.status === 'infeasible'
+        || (r.plan.plan.status === 'needs_clarification'
+          && proposals.length > 0
+          && proposals.every((p) => p.requiresConfirmation));
+      check('死胡同必去不发布回头路方案', !v && terminalStatus
+        && conflict && conflict.code === 'NO_NON_REPEATING_ROUTE', JSON.stringify({ conflict, proposals }));
     }
 
     // 用例 9：讲解异步就绪、来源完整、TTS 明确不可用（§9/§11）

@@ -143,16 +143,50 @@ class JobRunner {
     await sleep(300);
     if (this.cancelled(job)) return;
 
-    // 求解（主推荐 + 差异化备选）
-    const results = solveAlternatives(pack, intent, graph);
+    // 求解（主推荐 + 差异化备选）。agent 模式仍复用确定性求解器，
+    // 但在其外层增加约束台账、独立验证、冲突分类和需确认的修复提议。
+    let results;
+    let agentResult = null;
+    if (cfg.routePlanningMode === 'algorithm') {
+      results = solveAlternatives(pack, intent, graph);
+      store.update('plans', plan.id, { planningMode: 'algorithm' });
+    } else {
+      const { RoutePlanningAgent } = require('./route_planning_agent');
+      agentResult = new RoutePlanningAgent().plan({ pack, intent, graph, planId: plan.id });
+      results = agentResult.solutions;
+      store.update('plans', plan.id, {
+        planningMode: 'agent',
+        constraintLedger: agentResult.constraintLedger,
+        agentTrace: agentResult.trace,
+        agentProposals: agentResult.proposals.map((proposal) => ({
+          id: proposal.id,
+          action: proposal.action,
+          label: proposal.label,
+          reason: proposal.reason,
+          requiresConfirmation: proposal.requiresConfirmation,
+          patch: proposal.patch,
+          previewSummary: proposal.previewRoute ? routeSummary(proposal.previewRoute) : null,
+        })),
+      });
+    }
     store.update('plans', plan.id, { status: 'verifying' });
     if (!results.length) {
       const probe = solveOnce(pack, intent, graph, { interestW: 1, timeCostW: 0.5, dwellFactor: 1 });
       // 闭园冲突更具体、也更有出路（夜间最常见）→ 优先于笼统的时间不足
       const { closedNowConflict } = require('./planner');
-      const conflict = closedNowConflict(pack, intent) || probe.conflict || null;
-      store.update('plans', plan.id, { status: 'infeasible', conflict });
-      this.emit(job, 'job.failed', { code: (conflict && conflict.code) || 'NO_FEASIBLE_ROUTE', message: (conflict && conflict.message) || '无可行方案', retryable: false, conflict });
+      const conflict = closedNowConflict(pack, intent) || (agentResult && agentResult.conflict) || probe.conflict || null;
+      const proposals = agentResult ? agentResult.proposals.map((p) => ({
+        id: p.id, action: p.action, label: p.label, reason: p.reason,
+        requiresConfirmation: p.requiresConfirmation, patch: p.patch,
+        previewSummary: p.previewRoute ? routeSummary(p.previewRoute) : null,
+      })) : [];
+      const status = proposals.length ? 'needs_clarification' : 'infeasible';
+      store.update('plans', plan.id, { status, conflict, agentProposals: proposals });
+      this.emit(job, 'job.failed', {
+        code: (conflict && conflict.code) || 'NO_FEASIBLE_ROUTE',
+        message: (conflict && conflict.message) || '无可行方案',
+        retryable: false, conflict, proposals,
+      });
       return;
     }
 

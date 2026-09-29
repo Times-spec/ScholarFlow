@@ -21,6 +21,7 @@ function loadConfig() {
   }
   const cfg = {
     port: Number(process.env.PORT || fileCfg.port || 8080),
+    routePlanningMode: process.env.ROUTE_PLANNING_MODE || fileCfg.routePlanningMode || 'agent',
     amap: {
       jsKey: process.env.AMAP_JS_KEY || (fileCfg.amap && fileCfg.amap.jsKey) || '',
       jsSecurityCode: process.env.AMAP_JS_SECRET || (fileCfg.amap && fileCfg.amap.jsSecurityCode) || '',

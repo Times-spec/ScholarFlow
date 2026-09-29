@@ -63,9 +63,12 @@ node server/index.js
 ```bash
 node scripts/acceptance.js              # 全链路验收
 npm run test:planner-constraints        # 纯算法：无重复环路、死胡同冲突、Provider 折线重叠
+npm run test:route-strategies           # 算法直解 vs 有界智能体编排，同场景对照
 ```
 
 现场路线默认启用固定硬约束“同一物理路段不重复”：自有路网按稳定 `edgeId` 精确约束；高德路线按约 6 米网格重采样后的折线分段做会话内近似匹配，并明确标注无法证明绝对零重复。死胡同、唯一桥梁或同入口闭环无法满足时返回 `NO_NON_REPEATING_ROUTE`，不会静默发布回头路方案。
+
+路线生成默认使用有界智能体编排（`routePlanningMode: "agent"`）：智能体只编排“约束台账 → 确定性求解 → 独立验证 → 修复提议”，不直接生成道路序列，也不会自动放宽硬约束。遇到死胡同必去且必须回到起点时，会返回需用户确认的“改终点”等提议。可设置环境变量 `ROUTE_PLANNING_MODE=algorithm` 回退到纯算法直解，用于 A/B 测试和故障隔离。
 
 覆盖：起点降级、坐标单次转换、时间窗、追问、无重复路段、诚实约束、幂等、409、回顾，以及内容库、行程、订单和管理后台等能力。
 
@@ -89,6 +92,7 @@ server/            零依赖后端（REST + SSE + 持久任务队列 + JSON 存�
   admin.js         管理后台 API（令牌鉴权/看板/内容 CRUD/数据运维）
   api.js / planner.js / domain.js / amap.js / llm.js ...   游览助手（既有）
   route_constraints.js   固定约束与用户硬约束的路线遍历状态机
+  route_planning_agent.js   约束编译→求解→独立验证→修复提议的有界智能体
   data/            内部测试夹具（回归测试用，不在产品界面出现）
 data/content/      内容库 v1（cities/venues/narrations/articles/guides）
 web/               前台（手机优先 ES Module，无构建步骤）
