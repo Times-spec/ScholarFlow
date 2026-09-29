@@ -19,7 +19,13 @@ export function renderHome(view) {
   const stepsBar = h('div', { class: 'steps' },
     stepDot(1, '想怎么逛'), stepLine(1), stepDot(2, '哪个地方'), stepLine(2), stepDot(3, '怎么安排'));
   function stepDot(n, label) {
-    return h('div', { class: 'step' + (d.step === n ? ' active' : d.step > n ? ' done' : '') },
+    const clickable = d.step > n; // 只能往回点，前进仍走底部主按钮（保证必填校验）
+    return h('div', {
+      class: 'step' + (d.step === n ? ' active' : d.step > n ? ' done' : ''),
+      style: clickable ? 'cursor:pointer' : undefined,
+      title: clickable ? '回到这一步' : undefined,
+      onclick: clickable ? () => goStep(n) : undefined,
+    },
       h('span', { class: 'step-dot' }, d.step > n ? '✓' : String(n)),
       h('span', { class: 'step-label' }, label));
   }
@@ -39,11 +45,18 @@ export function renderHome(view) {
         d.scene = scene;
         if (scene === 'wander') { d.venueId = null; d.venueRef = null; }
         if (scene === 'venue') d.interests = []; // 场所属性不由游客选，兴趣标签只属于城市闲逛
+        applySceneDefaults(scene);
         saveDraft();
         goStep(scene === 'venue' && !d.venueId && !d.venueRef ? 2 : 3);
       },
     }, h('span', { class: 'choice-e' }, emoji),
       h('div', {}, h('div', { class: 'choice-t' }, title), h('div', { class: 'choice-d' }, desc)));
+  }
+  // 场景级出口默认值：景区默认"自动挑顺路的门"出园，闲逛默认回到起点；已指定过出口（fixed）则尊重原选择
+  function applySceneDefaults(scene) {
+    const untouched = !d.endpointPoint && !d.endpointEntranceId && !d.endpointPoiId;
+    if (scene === 'venue' && untouched && d.endpointMode === 'return_to_origin') d.endpointMode = 'flexible';
+    if (scene === 'wander' && untouched && d.endpointMode === 'flexible') d.endpointMode = 'return_to_origin';
   }
 
   /* ================= 第二步：哪个地方 ================= */
@@ -86,6 +99,7 @@ export function renderHome(view) {
             d.venueId = v.id;
             d.venueRef = { id: v.id, name: v.name, lng: v.coord.lng, lat: v.coord.lat, city: v.city, district: v.district };
             d.origin = { lng: norm.point.lng, lat: norm.point.lat, crs: 'GCJ02', label: '当前位置', source: 'device' };
+            applySceneDefaults('venue');
             saveDraft(); toast('已选择：' + v.name); goStep(3);
           },
         }, h('div', { class: 'n' }, v.name, h('span', { class: 'tag' }, (v.distanceM / 1000).toFixed(1) + 'km')),
@@ -105,7 +119,20 @@ export function renderHome(view) {
     h('h3', { class: 'sec-title' }, '怎么安排？'),
     h('div', { class: 'field' },
       h('div', { class: 'field-label' }, h('span', {}, '从哪里出发'), h('button', { class: 'link-btn', onclick: openOriginSheet }, '更改')),
-      h('div', { class: 'value-row' }, d.origin ? '📍 ' + d.origin.label : '未选择（可用当前位置 / 搜索 / 地图选点）')),
+      h('div', { class: 'value-row' }, d.origin ? '📍 ' + d.origin.label : '未选择（当前位置 / 搜索定位 / 地图精确选点）')),
+    isVenueScene ? h('div', { class: 'field' },
+      h('div', { class: 'field-label' }, h('span', {}, '从哪个门出'), h('span', { class: 'tl-meta' }, '决定路线往哪个门收尾')),
+      h('div', { class: 'chips' },
+        [['return_to_origin', '回到起点'], ['flexible', '自动挑顺路的门'], ['fixed', '指定门 / 位置']].map(([v, label]) =>
+          h('button', {
+            class: 'chip' + (d.endpointMode === v ? ' sel' : ''),
+            onclick: () => {
+              d.endpointMode = v;
+              if (v !== 'fixed') { d.endpointPoint = null; d.endpointLabel = null; d.endpointEntranceId = null; d.endpointPoiId = null; }
+              saveDraft(); rerender();
+            },
+          }, label)),
+        d.endpointMode === 'fixed' ? h('button', { class: 'chip sel', onclick: () => openPointPicker('endpoint') }, d.endpointLabel ? '📍 ' + d.endpointLabel : '🚪 选出口') : null)) : null,
     h('div', { class: 'field' },
       h('div', { class: 'field-label' }, h('span', {}, '逛多久'), h('button', { class: 'link-btn', onclick: openTimeSheet }, '按时间点安排')),
       h('div', { class: 'chips' }, DURATION_PRESETS.map(([sec, label]) =>
@@ -125,7 +152,7 @@ export function renderHome(view) {
         h('div', { class: 'chips' },
           [['return_to_origin', '回到起点'], ['flexible', '顺路结束'], ['fixed', '指定地点']].map(([v, label]) =>
             h('button', { class: 'chip' + (d.endpointMode === v ? ' sel' : ''), onclick: () => { d.endpointMode = v; saveDraft(); rerender(); } }, label)),
-          d.endpointMode === 'fixed' ? h('button', { class: 'chip', onclick: () => { openSearch('endpoint'); } }, d.endpointLabel ? '📍 ' + d.endpointLabel : '🔍 选终点') : null)),
+          d.endpointMode === 'fixed' ? h('button', { class: 'chip sel', onclick: () => openPointPicker('endpoint') }, d.endpointLabel ? '📍 ' + d.endpointLabel : '🔍 选终点') : null)),
     // 景区游玩不问"想看什么"：场所自带人文/自然属性，兴趣标签是城市闲逛的专属字段
     ...(isVenueScene ? [] : [h('div', { class: 'field' },
       h('div', { class: 'field-label' }, h('span', {}, '想看什么'), h('span', { class: 'tl-meta' }, '可多选，决定沿途看点')),
@@ -177,7 +204,11 @@ export function renderHome(view) {
 
   /* ================= 底部按钮 ================= */
   const primary = h('button', { class: 'btn btn-primary btn-lg', onclick: onPrimary }, primaryLabel());
-  const bottomBar = h('div', { class: 'bottom-bar' }, primary);
+  // 进入第 2/3 步后提供回退出口：景区 2→1、3→2；闲逛 3→1（闲逛没有第 2 步）
+  const backBtn = d.step > 1
+    ? h('button', { class: 'btn btn-ghost btn-lg', onclick: () => goStep(d.step === 2 ? 1 : d.scene === 'venue' ? 2 : 1) }, '‹ 上一步')
+    : null;
+  const bottomBar = h('div', { class: 'bottom-bar' }, backBtn, primary);
   function primaryLabel() {
     if (d.step === 1) return '下一步';
     if (d.step === 2) return (d.venueRef || d.venueId) ? '下一步' : '先去选地方';
@@ -285,6 +316,7 @@ export function renderHome(view) {
               d.venueId = v.id;
               d.venueRef = { id: v.id, name: v.name, lng: v.coord.lng, lat: v.coord.lat, city: v.city, district: v.district };
               d.scene = 'venue';
+              applySceneDefaults('venue');
               saveDraft(); closeSheet();
               toast('已选择：' + v.name);
               goStep(3);
@@ -303,8 +335,7 @@ export function renderHome(view) {
   function openOriginSheet() {
     openSheet('从哪里出发', h('div', {},
       optRow('📡', '使用当前位置', '点击时才申请定位权限', () => { closeSheet(); locateMe(); }),
-      optRow('🔍', '搜索地点', '输入地名、场所名或出口', () => { closeSheet(); openSearch('origin'); }),
-      optRow('🗺️', '地图选点', '在高德底图上点一下', () => { closeSheet(); openMapPick('origin'); })));
+      optRow('🔍', '搜索 / 地图精确选点', '先搜大致位置，再在地图上点准到具体门', () => { closeSheet(); openPointPicker('origin'); })));
   }
 
   /* ================= 弹层：时间 ================= */
@@ -350,20 +381,12 @@ export function renderHome(view) {
 
   /* ================= 弹层：更多条件 ================= */
   function openPrefSheet() {
-    // 城市闲逛的"终点"已是主字段，这里只在景区游玩时提供（园内从哪个门出）
-    const endpointBlock = d.scene !== 'wander' ? [
-      h('div', { class: 'field-label', style: 'margin-top:10px' }, '结束位置'),
-      h('div', { class: 'chips' },
-        [['return_to_origin', '回到起点'], ['flexible', '顺路结束'], ['fixed', '指定地点']].map(([v, label]) =>
-          h('button', { class: 'chip' + (d.endpointMode === v ? ' sel' : ''), onclick: () => { d.endpointMode = v; saveDraft(); openPrefSheet(); } }, label)),
-        d.endpointMode === 'fixed' ? h('button', { class: 'chip', onclick: () => { closeSheet(); openSearch('endpoint'); } }, d.endpointLabel ? '📍 ' + d.endpointLabel : '🔍 选终点') : null),
-    ] : [];
+    // 结束位置已提升为景区场景第三步的主字段「从哪个门出」，这里不再重复
     const box = h('div', {},
       h('div', { class: 'field-label' }, '预算'),
       h('div', { class: 'chips' },
         h('button', { class: 'chip' + (d.freePreferred ? ' sel' : ''), onclick: () => { d.freePreferred = !d.freePreferred; d.budgetHardZero = false; saveDraft(); openPrefSheet(); } }, '免费优先'),
         h('button', { class: 'chip' + (d.budgetHardZero ? ' sel' : ''), onclick: () => { d.budgetHardZero = !d.budgetHardZero; d.freePreferred = false; saveDraft(); openPrefSheet(); } }, '零门票（硬条件）')),
-      ...endpointBlock,
       h('div', { class: 'field-label', style: 'margin-top:10px' }, '讲解详略'),
       h('div', { class: 'chips' }, [['minimal', '少打扰'], ['normal', '适量'], ['rich', '想了解更多']].map(([v, label]) =>
         h('button', { class: 'chip' + (d.guideStyle === v ? ' sel' : ''), onclick: () => { d.guideStyle = v; saveDraft(); openPrefSheet(); } }, label))),
@@ -437,7 +460,7 @@ export function renderHome(view) {
 
   async function openMapPick(purpose) {
     const isLive = String(d.venueId || '').startsWith('live:');
-    if (isLive || !d.venueId) return openAmapPick(purpose);
+    if (isLive || !d.venueId) return openAmapPicker(purpose);
     const pack = await getVenuePack(d.venueId);
     const wrap = h('div', { class: 'map-wrap' });
     openSheet(purpose === 'origin' ? '地图选起点' : '地图选终点',
@@ -449,14 +472,18 @@ export function renderHome(view) {
       onPick: (pt) => {
         const lngLat = xyToLngLat(proj, center, pt);
         const near = nearestNode(pack, pt, proj);
+        const snapped = near && near.distanceM < 60;
         if (purpose === 'origin') {
-          d.origin = near && near.distanceM < 60
+          d.origin = snapped
             ? { lng: near.node.lng, lat: near.node.lat, crs: 'GCJ02', entranceId: near.node.type === 'entrance' ? near.node.id : null, poiId: near.node.type === 'poi' ? near.node.id : null, label: near.node.name, source: 'map_pick' }
-            : { lng: lngLat.lng, lat: lngLat.lat, crs: 'GCJ02', label: '地图所选位置', source: 'map_pick' };
+            : { lng: lngLat.lng, lat: lngLat.lat, crs: 'GCJ02', entranceId: null, poiId: null, label: '地图所选位置', source: 'map_pick' };
         } else {
           d.endpointMode = 'fixed';
-          d.endpointPoint = near && near.distanceM < 60 ? { lng: near.node.lng, lat: near.node.lat, crs: 'GCJ02' } : { lng: lngLat.lng, lat: lngLat.lat, crs: 'GCJ02' };
-          d.endpointLabel = near && near.distanceM < 60 ? near.node.name : '地图所选终点';
+          d.endpointPoint = snapped ? { lng: near.node.lng, lat: near.node.lat, crs: 'GCJ02' } : { lng: lngLat.lng, lat: lngLat.lat, crs: 'GCJ02' };
+          d.endpointLabel = snapped ? near.node.name : '地图所选终点';
+          // 大门/点位级精度要一路传到规划器，吸附失败必须清掉残留 id
+          d.endpointEntranceId = snapped && near.node.type === 'entrance' ? near.node.id : null;
+          d.endpointPoiId = snapped && near.node.type === 'poi' ? near.node.id : null;
         }
         saveDraft(); closeSheet(); rerender();
       },
@@ -464,39 +491,137 @@ export function renderHome(view) {
     drawPackBase(map, pack, proj);
   }
 
-  async function openAmapPick(purpose) {
-    if (!state.config.amapJsKey) { toast('未配置高德 JS Key，请改用搜索或定位'); return; }
-    const center = d.venueRef ? { lng: d.venueRef.lng, lat: d.venueRef.lat }
-      : (d.origin ? { lng: d.origin.lng, lat: d.origin.lat } : { lng: 104.0656, lat: 30.6595 });
-    const wrap = h('div', { class: 'map-wrap' });
-    const label = h('div', { class: 'input', style: 'margin-top:8px' }, '点击地图选择位置');
-    const confirmBtn = h('button', { class: 'btn btn-primary btn-block', disabled: true }, '就选这里');
-    openSheet(purpose === 'origin' ? '地图选起点' : '地图选终点', h('div', {}, wrap, label, confirmBtn));
+  /* ================= 组合选点：先搜大致位置 → 地图点准到具体门 ================= */
+  async function openAmapPicker(purpose) {
+    if (!state.config.amapJsKey) { toast('未配置高德 JS Key，请先用搜索或定位'); return; }
+    const isOrigin = purpose === 'origin';
+    const preset = isOrigin
+      ? (d.origin ? { lng: d.origin.lng, lat: d.origin.lat, label: d.origin.label, entranceId: d.origin.entranceId || null, poiId: d.origin.poiId || null } : null)
+      : (d.endpointPoint ? { lng: d.endpointPoint.lng, lat: d.endpointPoint.lat, label: d.endpointLabel, entranceId: d.endpointEntranceId || null, poiId: d.endpointPoiId || null } : null);
+
+    // 景区模式预取大门清单：直接选门是最可靠的"精确到哪个门"
+    let gates = [];
+    if (d.venueId) {
+      try {
+        const pack = await getVenuePack(d.venueId);
+        gates = (pack.nodes || []).filter((n) => n.type === 'entrance');
+      } catch (e) { /* 拿不到大门清单就退化为纯地图选点 */ }
+    }
+
+    const center = preset ? { lng: preset.lng, lat: preset.lat }
+      : d.venueRef ? { lng: d.venueRef.lng, lat: d.venueRef.lat }
+        : d.origin ? { lng: d.origin.lng, lat: d.origin.lat } : { lng: 104.0656, lat: 30.6595 };
+
+    const searchInput = h('input', { class: 'input', placeholder: '先输入大致位置，如「东门」「地铁站」「酒店」' });
+    const resultList = h('div', { style: 'max-height:170px;overflow-y:auto' });
+    const gateChips = gates.map((g) => h('button', {
+      class: 'chip',
+      onclick: () => {
+        applyPick({ lng: g.lng, lat: g.lat, label: g.name, entranceId: g.id, poiId: null });
+        if (map) map.setZoomAndCenter(16, [g.lng, g.lat]);
+      },
+    }, '🚪 ' + g.name));
+    const gateRow = gates.length ? h('div', { style: 'margin-top:10px' },
+      h('div', { class: 'field-label' }, '直达景区大门（导航真正可用）'),
+      h('div', { class: 'chips' }, gateChips)) : null;
+    const pickLabel = h('div', { class: 'value-row', style: 'margin-top:10px' }, preset ? '已选：' + (preset.label || '地图所选位置') : '在地图上点一下，或先搜索大致位置');
+    const confirmBtn = h('button', { class: 'btn btn-primary btn-block', disabled: !preset }, isOrigin ? '确认起点' : '确认终点');
+    const wrap = h('div', { class: 'map-wrap', style: 'margin-top:8px' });
+    openSheet(isOrigin ? '起点定在哪里？' : '终点定在哪里？',
+      h('div', {}, searchInput, resultList, wrap, gateRow, pickLabel, confirmBtn));
+
+    let map = null, marker = null, clickSeq = 0;
+    let picked = preset ? { ...preset } : null;
+
+    function applyPick(pt) {
+      picked = { lng: pt.lng, lat: pt.lat, label: pt.label || '地图所选位置', entranceId: pt.entranceId || null, poiId: pt.poiId || null };
+      confirmBtn.disabled = false;
+      pickLabel.textContent = '已选：' + picked.label + (picked.entranceId ? ' · 大门精确入口' : '');
+      gateChips.forEach((b, i) => b.classList.toggle('sel', !!picked.entranceId && picked.entranceId === gates[i].id));
+      if (!map) return;
+      if (!marker) {
+        // 高德 2.0：构造的覆盖物不会自动上图，必须 map.add
+        marker = new AMap.Marker({
+          position: [picked.lng, picked.lat], anchor: 'bottom-center',
+          content: '<div style="width:16px;height:16px;border-radius:50%;background:#0f6f4f;border:3px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.35)"></div>',
+        });
+        map.add(marker);
+      } else marker.setPosition([picked.lng, picked.lat]);
+    }
+    if (preset) applyPick(preset); // 回显已选（地图未就绪时先更新文字与大门 chips）
+
+    const doSearch = async () => {
+      const q = searchInput.value.trim();
+      if (!q) { resultList.innerHTML = ''; return; }
+      resultList.innerHTML = '<div class="empty">搜索中…</div>';
+      try {
+        const r = await get(`/v1/places/search?q=${encodeURIComponent(q)}`);
+        resultList.innerHTML = '';
+        const hits = r.results.filter((x) => x.coord);
+        if (!hits.length) { resultList.append(h('div', { class: 'empty' }, '没有找到匹配地点')); return; }
+        for (const item of hits) {
+          resultList.append(h('div', {
+            class: 'poi-result',
+            onclick: () => {
+              applyPick({ lng: item.coord.lng, lat: item.coord.lat, label: item.name });
+              resultList.innerHTML = '';
+              if (map) map.setZoomAndCenter(16, [item.coord.lng, item.coord.lat]);
+            },
+          }, h('div', { class: 'n' }, item.name), h('div', { class: 'a' }, item.disambiguation || item.address || '')));
+        }
+      } catch (e) { resultList.innerHTML = ''; resultList.append(h('div', { class: 'empty' }, e.message)); }
+    };
+    searchInput.addEventListener('input', debounce(doSearch, 320));
+
     try {
       const AMap = await loadAmap(state.config.amapJsKey, state.config.amapJsSecurityCode);
       const div = h('div', {});
       wrap.append(div);
-      const map = new AMap.Map(div, { zoom: 16, center: [center.lng, center.lat], viewMode: '2D', mapStyle: 'amap://styles/fresh' });
-      div.style.height = '340px';
-      let picked = null;
+      map = new AMap.Map(div, { zoom: 16, center: [center.lng, center.lat], viewMode: '2D', mapStyle: 'amap://styles/fresh' });
+      div.style.height = '300px';
+      for (const g of gates) {
+        const gm = new AMap.Marker({
+          position: [g.lng, g.lat], anchor: 'bottom-center',
+          content: `<div style="background:#0f6f4f;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.3)">🚪${g.name}</div>`,
+        });
+        gm.on('click', () => applyPick({ lng: g.lng, lat: g.lat, label: g.name, entranceId: g.id }));
+        map.add(gm);
+      }
+      if (picked) applyPick(picked); // 地图就绪后补挂已选 marker
       map.on('click', async (e) => {
-        picked = { lng: e.lnglat.getLng(), lat: e.lnglat.getLat() };
-        confirmBtn.disabled = false;
-        label.textContent = `已选：${picked.lng.toFixed(5)}, ${picked.lat.toFixed(5)}`;
+        const lng = e.lnglat.getLng(), lat = e.lnglat.getLat();
+        const seq = ++clickSeq;
+        // 靠近大门(<80m)自动吸附：起点/终点钉在门上，园内路网规划与真实导航才对得上
+        let hit = null;
+        for (const g of gates) {
+          const dist = Math.hypot((lng - g.lng) * 95803, (lat - g.lat) * 110940);
+          if (dist < 80 && (!hit || dist < hit.dist)) hit = { g, dist };
+        }
+        if (hit) { applyPick({ lng: hit.g.lng, lat: hit.g.lat, label: hit.g.name, entranceId: hit.g.id }); return; }
+        applyPick({ lng, lat, label: '定位中…' });
         try {
-          const rev = await post('/v1/locations/reverse', { lng: picked.lng, lat: picked.lat });
-          picked.label = rev.label || '地图所选位置';
-          label.textContent = '已选：' + picked.label;
-        } catch (err) { picked.label = '地图所选位置'; }
+          const rev = await post('/v1/locations/reverse', { lng, lat });
+          if (seq === clickSeq) applyPick({ lng, lat, label: rev.label || '地图所选位置' });
+        } catch (err) {
+          if (seq === clickSeq) applyPick({ lng, lat, label: '地图所选位置' });
+        }
       });
-      confirmBtn.onclick = () => {
-        if (!picked) return;
-        if (purpose === 'origin') d.origin = { lng: picked.lng, lat: picked.lat, crs: 'GCJ02', label: picked.label, source: 'map_pick' };
-        else { d.endpointMode = 'fixed'; d.endpointPoint = { lng: picked.lng, lat: picked.lat, crs: 'GCJ02' }; d.endpointLabel = picked.label; }
-        saveDraft(); closeSheet(); rerender();
-      };
-      cleanupFns.push(() => { try { map.destroy(); } catch (e) {} });
-    } catch (e) { toast('高德底图加载失败，请改用搜索或定位'); }
+      cleanupFns.push(() => { try { map.destroy(); } catch (e2) {} });
+    } catch (e) { toast('高德底图加载失败，可先用搜索选定大致位置'); }
+
+    confirmBtn.onclick = () => {
+      if (!picked) return;
+      if (isOrigin) {
+        d.origin = { lng: picked.lng, lat: picked.lat, crs: 'GCJ02', label: picked.label, source: 'map_pick', entranceId: picked.entranceId, poiId: picked.poiId };
+      } else {
+        d.endpointMode = 'fixed';
+        d.endpointPoint = { lng: picked.lng, lat: picked.lat, crs: 'GCJ02' };
+        d.endpointLabel = picked.label;
+        d.endpointEntranceId = picked.entranceId;
+        d.endpointPoiId = picked.poiId;
+      }
+      saveDraft(); closeSheet(); rerender();
+    };
   }
 
   /* ================= 渲染 ================= */
@@ -540,7 +665,8 @@ export function buildIntentPayload(d) {
       timeMode: d.timeMode, durationSec: d.durationSec, latestEndClock: d.latestEndClock,
       startMode: d.startMode, startAtMs: d.startAtMs,
       endpointMode: d.endpointMode,
-      endpointPoint: d.endpointPoint, endpointLabel: d.endpointLabel, endpointEntranceId: d.endpointEntranceId,
+      endpointPoint: d.endpointPoint, endpointLabel: d.endpointLabel,
+      endpointEntranceId: d.endpointEntranceId, endpointPoiId: d.endpointPoiId,
       mobility: d.mobility, pace: d.pace, interests: d.interests,
       mustVisitIds: d.mustVisit.map((x) => x.id), avoidPoiIds: d.avoid.map((x) => x.id),
       freePreferred: d.freePreferred, budgetHardZero: d.budgetHardZero,
@@ -607,6 +733,11 @@ export function drawPackBase(map, pack, proj) {
   map.fit(bounds, 50);
 }
 export function drawMapLabel(map, p, text, dy, color) {
-  const t = map.el('text', { x: p.x, y: p.y + dy, 'font-size': 11, fill: color || '#43534b', 'text-anchor': 'middle', 'font-weight': 600 });
+  // 无框光晕标签：白描边(paint-order:stroke)让文字在任何底图上醒目又不遮挡
+  const t = map.el('text', {
+    x: p.x, y: p.y + dy, 'font-size': 11.5, fill: color || '#14332a', 'font-weight': 700,
+    'text-anchor': 'middle', stroke: '#ffffff', 'stroke-width': 3,
+    'paint-order': 'stroke', 'stroke-linejoin': 'round', class: 'am-name',
+  });
   t.textContent = text;
 }

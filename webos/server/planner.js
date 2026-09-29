@@ -204,12 +204,15 @@ function scheduleRoute(pack, intent, graph, nodeSeq, opts = {}) {
   let endNodeId = opts.endNodeId;
   let endLeg = null;
   if (endNodeId && endNodeId !== prevNode) {
-    const r = traversal.route(prevNode, endNodeId);
+    // 回到起点的返程允许沿去程走回（通勤性质；真实街道网上回程必然重复去程），
+    // 游览段仍严格不重复；重复距离照常计量并在校验层如实提示
+    const isReturnTrip = opts.isReturnTrip || endNodeId === opts.startNodeId;
+    const r = traversal.route(prevNode, endNodeId, { allowRepeat: isReturnTrip });
     if (r.status !== 'ok') {
       problems.push({ nodeId: endNodeId, code: r.code || (traversal.hard.noRepeatedEdges ? 'end_requires_repeated_edge' : 'end_unreachable') });
       return { ok: false, problems, constraintMetrics: traversal.metrics() };
     }
-    endLeg = { fromNodeId: prevNode, toNodeId: endNodeId, mode: 'walk', distanceM: r.distanceM, travelSec: Math.round(r.distanceM / speed), edgeIds: r.edgeIds, geometry: r.geometry, physicalSegmentKeys: r.physicalSegmentKeys || null, repeatDetection: r.repeatDetection || 'edge-id-exact', provider: r.provider || null };
+    endLeg = { fromNodeId: prevNode, toNodeId: endNodeId, mode: 'walk', distanceM: r.distanceM, travelSec: Math.round(r.distanceM / speed), edgeIds: r.edgeIds, geometry: r.geometry, physicalSegmentKeys: r.physicalSegmentKeys || null, repeatDetection: r.repeatDetection || 'edge-id-exact', provider: r.provider || null, isReturnLeg: true };
   }
   const endArrivalMs = t + (endLeg ? endLeg.travelSec * 1000 : 0);
 
@@ -410,16 +413,31 @@ function validatePlan(pack, intent, graph, solved) {
   const stopIds = new Set(schedule.stops.map((s) => s.nodeId));
   constraints.push({ key: 'must_visit_present', result: intent.hard.mustVisitIds.every((m) => stopIds.has(m)) ? 'pass' : 'fail', evidenceIds: [] });
   constraints.push({ key: 'avoid_absent', result: intent.hard.avoidPoiIds.every((a) => !stopIds.has(a)) ? 'pass' : 'fail', evidenceIds: [] });
-  // 固定约束：正反向共用同一物理 edgeId；任何重复都不得发布为可执行路线。
+  // 固定约束：游览段不得重复任何物理路段；返程回起点允许沿去程走回（通勤性质，如实计量并提示）
   const allLegs = [...schedule.legs, ...(schedule.endLeg ? [schedule.endLeg] : [])];
-  const repeat = repeatedEdgeMetrics(allLegs, graph);
-  const repeatApprox = allLegs.some((l) => l.repeatDetection === 'geometry-grid-approx');
+  const returnTrip = !!(schedule.endLeg && solved.endNodeId === solved.startNodeId);
+  const sightLegs = returnTrip ? schedule.legs : allLegs;
+  const repeat = repeatedEdgeMetrics(sightLegs, graph);
+  const repeatApprox = sightLegs.some((l) => l.repeatDetection === 'geometry-grid-approx');
   constraints.push({
     key: 'no_repeated_edges',
     result: repeat.repeatedEdgeIds.length ? 'fail' : repeatApprox ? 'unknown' : 'pass',
     evidenceIds: repeat.repeatedEdgeIds,
     verification: repeatApprox ? 'polyline_spatial_match_approx' : 'physical_edge_id_exact',
   });
+  if (returnTrip) {
+    const seen = new Set(sightLegs.flatMap((l) => l.physicalSegmentKeys || (l.edgeIds || []).map((e) => 'e:' + e)));
+    const retKeys = schedule.endLeg.physicalSegmentKeys || (schedule.endLeg.edgeIds || []).map((e) => 'e:' + e);
+    const overlap = retKeys.filter((k) => seen.has(k)).length;
+    const overlapM = Math.round(schedule.endLeg.distanceM * overlap / Math.max(1, retKeys.length));
+    warnings.push({
+      code: 'RETURN_BACKTRACK',
+      message: overlap > 0
+        ? `返程约 ${Math.round(schedule.endLeg.distanceM)}m，其中约 ${overlapM}m 沿去程走回（回到起点的必经通勤）`
+        : '返程与去程路段不重叠',
+      evidenceIds: [],
+    });
+  }
   if (repeatApprox && !repeat.repeatedEdgeIds.length) {
     warnings.push({ code: 'BACKTRACKING_APPROXIMATED', message: '真实路线已按折线空间匹配规避重叠，但地图服务未提供稳定道路 ID，无法证明绝对零重复', evidenceIds: [] });
   }

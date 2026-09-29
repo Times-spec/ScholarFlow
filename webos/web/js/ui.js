@@ -158,6 +158,11 @@ export class SvgMap {
   }
   _apply() {
     this.svg.setAttribute('viewBox', `${this.view.x} ${this.view.y} ${this.view.w} ${this.view.h}`);
+    // 缩放分级（视口宽度≈可见米数）：远图只看路线骨架，中图出现站名与转向箭头，近图补转向文字
+    const w = this.view.w;
+    this.svg.classList.toggle('am-z-far', w > 2200);
+    this.svg.classList.toggle('am-z-mid', w > 900 && w <= 2200);
+    this.svg.classList.toggle('am-z-near', w <= 900);
   }
   fit(bounds, pad = 60) {
     const w = Math.max(50, bounds.maxX - bounds.minX + pad * 2);
@@ -206,14 +211,93 @@ function stopMarkerContent(text, bg) {
     border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)">${text}</div>`;
 }
 
+/* ---------------- 岔路口转向检测 ----------------
+ * 把各路段折线拼成连续轨迹，在方向变化超过阈值的顶点放置转向箭头。
+ * 阈值/最小段长过滤掉步道自然弯曲，只留真实岔口级转向；近邻合并防曲线连发。 */
+function detectTurns(legs, walkedUpto, { minSegM = 14, turnDeg = 45, bigDeg = 72, mergeM = 30 } = {}) {
+  const raw = [];
+  (legs || []).forEach((leg, li) => {
+    if (li < walkedUpto) return; // 已走过的路段不再提示
+    for (const c of (leg.geometry && leg.geometry.coordinates) || []) raw.push(c);
+  });
+  const pts = [];
+  for (const c of raw) {
+    const last = pts[pts.length - 1];
+    if (!last || Math.abs(last[0] - c[0]) > 1e-9 || Math.abs(last[1] - c[1]) > 1e-9) pts.push(c);
+  }
+  if (pts.length < 3) return [];
+  const cosLat = Math.cos((pts.reduce((s, p) => s + p[1], 0) / pts.length) * Math.PI / 180);
+  const M_LAT = 110940, M_LNG = 111320 * cosLat;
+  const vec = (a, b) => ({ x: (b[0] - a[0]) * M_LNG, y: (b[1] - a[1]) * M_LAT });
+  const turns = [];
+  for (let i = 1; i < pts.length - 1; i++) {
+    const v1 = vec(pts[i - 1], pts[i]), v2 = vec(pts[i], pts[i + 1]);
+    if (Math.hypot(v1.x, v1.y) < minSegM || Math.hypot(v2.x, v2.y) < minSegM) continue;
+    const cross = v1.x * v2.y - v1.y * v2.x;
+    const dot = v1.x * v2.x + v1.y * v2.y;
+    const delta = Math.atan2(cross, dot) * 180 / Math.PI; // >0=左转（地理坐标系逆时针为正）
+    if (Math.abs(delta) < turnDeg) continue;
+    turns.push({
+      coord: pts[i], delta,
+      bearingOut: (Math.atan2(v2.x, v2.y) * 180 / Math.PI + 360) % 360, // 出射方向：北=0 顺时针
+      big: Math.abs(delta) >= bigDeg,
+    });
+  }
+  const merged = [];
+  for (const t of turns) {
+    const prev = merged[merged.length - 1];
+    if (prev && Math.hypot((t.coord[0] - prev.coord[0]) * M_LNG, (t.coord[1] - prev.coord[1]) * M_LAT) < mergeM) {
+      if (Math.abs(t.delta) > Math.abs(prev.delta)) merged[merged.length - 1] = t;
+      continue;
+    }
+    merged.push(t);
+  }
+  return merged.slice(0, 40);
+}
+
+const turnDir = (delta) => (delta > 0 ? '左转' : '右转');
+const turnArrowSvg = () => `<svg width="22" height="22" viewBox="0 0 24 24" style="display:block;filter:drop-shadow(0 0 1.5px rgba(255,255,255,.95))">
+  <path d="M12 3 L20.5 17.5 L12 13.6 L3.5 17.5 Z" fill="#0f6f4f" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+
+/** SVG 路网渲染的转向标注（plan/trip 的降级路径与演示场所包共用） */
+export function svgTurnMarkers(map, legs, proj, { walkedUpto = -1 } = {}) {
+  for (const t of detectTurns(legs, walkedUpto)) {
+    const p = proj.toXY({ lng: t.coord[0], lat: t.coord[1] });
+    map.el('path', {
+      d: 'M0,-7.5 L5.5,5.5 L0,2.2 L-5.5,5.5 Z', fill: '#0f6f4f',
+      stroke: '#fff', 'stroke-width': 1.4, 'stroke-linejoin': 'round', opacity: 0.95,
+      transform: `translate(${p.x} ${p.y}) rotate(${t.bearingOut})`, class: 'am-turn-arrow',
+    });
+    if (t.big) {
+      const tx = map.el('text', {
+        x: p.x, y: p.y - 12, 'font-size': 11, 'font-weight': 800, fill: '#b4541c',
+        'text-anchor': 'middle', stroke: '#fff', 'stroke-width': 3,
+        'paint-order': 'stroke', 'stroke-linejoin': 'round', class: 'am-turn-text',
+      });
+      tx.textContent = turnDir(t.delta);
+    }
+  }
+}
+
 export class AmapRouteMap {
   constructor(container, { AMap, height = 300 }) {
     this.AMap = AMap;
     container.style.height = height + 'px';
     container.style.width = '100%';
+    container.classList.add('am-route-map');
     // resizeEnable：容器尺寸在创建后才稳定（挂载时序/弹层/旋转）时自动重算画布，避免 0×0 空白
     this.map = new AMap.Map(container, { zoom: 15, viewMode: '2D', mapStyle: 'amap://styles/fresh', resizeEnable: true });
     this.overlays = [];
+    // 缩放分级：远图只看路线骨架与站点圆点，中图出现站名与转向箭头，近图再补"左转/右转"文字。
+    // 用容器 class 承载，CSS 控制显隐，避免逐 marker 更新。
+    const applyTier = () => {
+      const z = this.map.getZoom();
+      container.classList.toggle('am-z-far', z < 15);
+      container.classList.toggle('am-z-mid', z >= 15 && z < 16.5);
+      container.classList.toggle('am-z-near', z >= 16.5);
+    };
+    this.map.on('zoomchange', applyTier);
+    applyTier();
   }
   clear() {
     if (this.overlays.length) { this.map.remove(this.overlays); this.overlays = []; }
@@ -259,9 +343,28 @@ export class AmapRouteMap {
         content: stopMarkerContent(text, bg),
         offset: new AMap.Pixel(-14, -14),
         title: s.name, zIndex: 50,
-        label: { content: `<div style="font-size:11px;color:#43534b;background:rgba(255,255,255,.9);padding:1px 6px;border-radius:6px;margin-top:2px">${s.name}</div>`, direction: 'top' },
+        // 无框光晕标签：白描边 halo 保证任何底图上可读，不遮地图内容
+        label: { content: `<div class="am-label-halo${state ? ' dim' : ''}">${s.name}</div>`, direction: 'top' },
       }));
     });
+    // 岔路口转向提示：箭头指示出射方向，大转角（≥72°）补"左转/右转"文字
+    for (const t of detectTurns(route.legs, walkedUpto)) {
+      this._add(new AMap.Marker({
+        position: new AMap.LngLat(t.coord[0], t.coord[1]),
+        content: turnArrowSvg(),
+        angle: t.bearingOut,
+        offset: new AMap.Pixel(-11, -11),
+        title: turnDir(t.delta), zIndex: 42,
+      }));
+      if (t.big) {
+        this._add(new AMap.Marker({
+          position: new AMap.LngLat(t.coord[0], t.coord[1]),
+          content: `<div class="am-turn-text">${turnDir(t.delta)}</div>`,
+          offset: new AMap.Pixel(0, -20),
+          zIndex: 43,
+        }));
+      }
+    }
     if (this.overlays.length) this.map.setFitView(this.overlays, false, [40, 40, 40, 40]);
   }
   destroy() { try { this.map.destroy(); } catch (e) {} }

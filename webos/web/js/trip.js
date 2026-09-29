@@ -1,6 +1,6 @@
 // 游览执行页：下一站优先 + 到站确认 + 快捷重排（提议—确认—提交）+ 讲解播放（§11/§12）
 import { get, post, subscribeJob } from './api.js';
-import { h, toast, openSheet, closeSheet, SvgMap, makeProjector, fmtMin, fmtKm, fmtClock, loadAmap, AmapRouteMap } from './ui.js';
+import { h, toast, openSheet, closeSheet, SvgMap, makeProjector, fmtMin, fmtKm, fmtClock, loadAmap, AmapRouteMap, svgTurnMarkers } from './ui.js';
 import { state, getVenuePack } from './app.js';
 import { drawPackBase, drawMapLabel } from './home.js';
 
@@ -139,6 +139,7 @@ export function renderTrip(view, ctx, tripId) {
       t.textContent = skip ? '✕' : done ? '✓' : i + 1;
       drawMapLabel(map, p, st.name, -17);
     });
+    svgTurnMarkers(map, route.legs, proj, { walkedUpto: nextIdx0 });
     if (!pack) map.fit(bounds, 60);
     mapWrap.append(h('div', { class: 'map-note' }, (isDemoMap ? '演示地图（虚构场所数据）' : '高德真实路网（示意）') + ' · 灰色虚线=已走过'));
     } // end !usedAmap

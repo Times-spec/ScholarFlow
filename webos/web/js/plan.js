@@ -1,6 +1,6 @@
 // 路线页：真实阶段进度（SSE）+ 主推荐/备选 + 地图 + 时间轴 + 站点编辑（§9.2/§10）
 import { get, post, subscribeJob } from './api.js';
-import { h, toast, openSheet, closeSheet, SvgMap, makeProjector, fmtMin, fmtKm, fmtClock, loadAmap, AmapRouteMap } from './ui.js';
+import { h, toast, openSheet, closeSheet, SvgMap, makeProjector, fmtMin, fmtKm, fmtClock, loadAmap, AmapRouteMap, svgTurnMarkers } from './ui.js';
 import { state, getVenuePack } from './app.js';
 import { buildIntentPayload } from './home.js';
 import { drawPackBase, drawMapLabel } from './home.js';
@@ -20,6 +20,11 @@ export function renderPlan(view, ctx, planId) {
 
   const root = h('div', {});
   view.append(root);
+
+  // 顶部常驻返回口：此前只有规划不可行时才有"返回修改条件"，规划成功后用户反而无处可回
+  const backBar = h('div', { style: 'margin-bottom:2px' },
+    h('button', { class: 'link-btn', onclick: () => { location.hash = '#/'; } }, '‹ 返回调整条件'));
+  root.append(backBar);
 
   const progressCard = h('div', { class: 'card' });
   const chipsBar = h('div', { class: 'confirm-bar hidden' });
@@ -171,6 +176,7 @@ export function renderPlan(view, ctx, planId) {
       drawMapLabel(map, p, s.name, -17);
     });
     if (!pack) map.fit(bounds, 60);
+    svgTurnMarkers(map, v.legs, proj);
     const sp = proj.toXY({ lng: firstPt[0], lat: firstPt[1] });
     drawMapLabel(map, sp, '起点', 22, '#0f6f4f');
     mapWrap.append(h('div', { class: 'map-note' }, isDemoMap ? '演示地图（虚构场所数据）· 可拖动缩放' : '高德真实路网（示意） · 可拖动缩放'));

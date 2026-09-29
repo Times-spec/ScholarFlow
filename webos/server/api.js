@@ -412,7 +412,8 @@ class Api {
       const approachM = Math.round(Math.hypot(
         (intent.origin.point.lng - vc.lng) * 95803,
         (intent.origin.point.lat - vc.lat) * 110940));
-      if (approachM > 1000) {
+      // 已精确到门/点位（entranceId/poiId）的起点是用户显式选定的，即使离中心 >1km（大型景区）也不改锚
+      if (approachM > 1000 && !intent.origin.entranceId && !intent.origin.poiId) {
         const fromLabel = intent.origin.label || '原起点';
         intent.originApproach = { fromLabel, distanceM: approachM, fromPoint: intent.origin.point };
         intent.origin = {

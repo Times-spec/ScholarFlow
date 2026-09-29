@@ -350,3 +350,31 @@ li.active .stage-dot { background: var(--warn); animation: pulse 1s infinite alt
 /* 修复：flex 行内的主按钮不铺满（.btn-primary 默认 width:100%） */
 .disc-search .btn { width: auto; flex: none; }
 .narr-rate { white-space: nowrap; }
+
+/* ==================== 地图标注：无框光晕 + 缩放分级 ==================== */
+/* AMap marker label 默认白底描边框 → 透明无边框，由内容自绘（不遮挡地图） */
+.am-route-map .amap-marker-label {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+/* 白色多向光晕：深色文字在任何底图上都醒目，无底框 */
+.am-label-halo,
+.am-turn-text {
+  font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  white-space: nowrap;
+  text-shadow:
+    0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff,
+    1px 1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, -1px -1px 0 #fff,
+    0 0 4px rgba(255, 255, 255, .95);
+}
+.am-label-halo { font-size: 12px; font-weight: 700; color: #14332a; line-height: 1.25; }
+.am-label-halo.dim { opacity: .55; }
+.am-turn-text { font-size: 12px; font-weight: 800; color: #b4541c; padding-bottom: 2px; }
+/* 缩放分级：远图(<15)只看路线骨架+站点圆点；中图(15-16.5)加站名与转向箭头；近图(≥16.5)再补转向文字 */
+.am-z-far .amap-marker-label, .am-z-far .am-turn-text, .am-z-far .am-turn-arrow { display: none; }
+.am-z-mid .am-turn-text { display: none; }
+/* SVG 路网渲染（演示场所包/降级路径）同样分级 */
+svg.am-z-far .am-name, svg.am-z-far .am-turn-arrow, svg.am-z-far .am-turn-text { display: none; }
+svg.am-z-mid .am-turn-text { display: none; }

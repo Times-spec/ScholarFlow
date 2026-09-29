@@ -152,18 +152,29 @@ async function main() {
         JSON.stringify(cov ? { v: cov.visitedTargetIds.length, e: cov.eligibleTargetIds.length } : r.plan.plan.conflict));
     }
 
-    // 用例 8：湖心岛（唯一桥梁死胡同）必去 → 固定“不重复物理路段”约束下明确不可行
+    // 用例 8：湖心岛（唯一桥梁死胡同）必去 —— 两种终点的诚实边界
+    // 回起点：岛排最后、返程过桥属通勤段（豁免）→ 可发布，但必须如实披露返程重复；
+    // 固定东门终点（≠起点）：过桥重复落在游览段 → 固定不重复约束下明确不可行。
     {
-      const r = await makePlan(T, baseForm({ mustVisitIds: ['poi_island'] }), '');
-      const v = r.plan.versions[0];
-      const conflict = r.plan.plan.conflict;
-      const proposals = r.plan.plan.agentProposals || [];
-      const terminalStatus = r.plan.plan.status === 'infeasible'
-        || (r.plan.plan.status === 'needs_clarification'
-          && proposals.length > 0
-          && proposals.every((p) => p.requiresConfirmation));
-      check('死胡同必去不发布回头路方案', !v && terminalStatus
-        && conflict && conflict.code === 'NO_NON_REPEATING_ROUTE', JSON.stringify({ conflict, proposals }));
+      const r1 = await makePlan(T, baseForm({ mustVisitIds: ['poi_island'] }), '');
+      const v1 = r1.plan.versions[0];
+      const warn = v1 && (v1.warnings || []).find((w) => w.code === 'RETURN_BACKTRACK');
+      check('死胡同必去+回起点：可执行且披露返程重复',
+        v1 && ['verified', 'conditional'].includes(v1.status)
+        && v1.stops.some((s) => s.poiId === 'poi_island')
+        && v1.stops[v1.stops.length - 1].poiId === 'poi_island'
+        && warn, JSON.stringify({ st: v1 && v1.status, warn }));
+
+      // 固定东门终点（≠起点南门）：过桥重复必然落在游览段/非豁免返程 → 不得发布
+      const r2 = await makePlan(T, baseForm({
+        mustVisitIds: ['poi_island'], endpointMode: 'fixed',
+        endpointPoint: { lng: 104.069307, lat: 30.659901, crs: 'GCJ02' }, endpointLabel: '东门',
+      }), '');
+      const v2 = r2.plan.versions[0];
+      const conflict2 = r2.plan.plan.conflict;
+      check('死胡同必去+异地终点：不发布回头路方案',
+        !v2 && r2.plan.plan.status === 'infeasible'
+        && conflict2 && conflict2.code === 'NO_NON_REPEATING_ROUTE', JSON.stringify({ conflict: conflict2 }));
     }
 
     // 用例 9：讲解异步就绪、来源完整、TTS 明确不可用（§9/§11）

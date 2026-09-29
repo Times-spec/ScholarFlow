@@ -30,7 +30,7 @@ function defaultDraft() {
     origin: null,
     timeMode: 'duration', durationSec: 7200, latestEndClock: '17:00',
     startMode: 'now', startAtMs: null,
-    endpointMode: 'return_to_origin', endpointPoint: null, endpointLabel: null, endpointEntranceId: null,
+    endpointMode: 'return_to_origin', endpointPoint: null, endpointLabel: null, endpointEntranceId: null, endpointPoiId: null,
     mobility: 'walk', pace: 'normal', interests: [], text: '',
     mustVisit: [], avoid: [],
     freePreferred: false, budgetHardZero: false,

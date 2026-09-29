@@ -64,8 +64,8 @@ function createTraversalConstraintState(intent, graph) {
   const repeatedEdgeIds = new Set();
   let distanceM = 0;
 
-  function route(fromId, toId) {
-    const forbiddenEdgeIds = hard.noRepeatedEdges ? usedEdgeIds : null;
+  function route(fromId, toId, callOpts = {}) {
+    const forbiddenEdgeIds = hard.noRepeatedEdges && !callOpts.allowRepeat ? usedEdgeIds : null;
     const result = graph.route(fromId, toId, { forbiddenEdgeIds });
     if (!result || result.status !== 'ok') {
       return result || { status: 'unreachable', distanceM: null, nodeIds: [], edgeIds: [], geometry: [] };
@@ -74,7 +74,8 @@ function createTraversalConstraintState(intent, graph) {
     const keys = physicalKeysOf(result);
     const repeated = keys.filter((key) => usedPhysicalKeys.has(key));
     for (const key of repeated) repeatedEdgeIds.add(key);
-    if (hard.noRepeatedEdges && repeated.length) {
+    // allowRepeat：返程回起点等通勤段允许沿去程走回，只记录不拦截（游览段仍严格不重复）
+    if (hard.noRepeatedEdges && repeated.length && !callOpts.allowRepeat) {
       return {
         status: 'constraint_violation', code: 'REPEATED_EDGE',
         distanceM: null, nodeIds: [], edgeIds: repeated, geometry: [],

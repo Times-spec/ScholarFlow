@@ -215,7 +215,8 @@ function normalizeIntent(input, packs, preParsed = null) {
   let endpoint;
   const ep = form.endpointMode || (parsed.endpointRef && parsed.endpointRef.mode) || 'return_to_origin';
   if (ep === 'fixed' && form.endpointPoint) {
-    endpoint = { mode: 'fixed', point: form.endpointPoint, poiId: form.endpointPoiId || null, label: form.endpointLabel || '指定终点' };
+    // entranceId/poiId：用户在地图上吸附到具体门/点位时由前端写入，planner 优先用它定位（比裸坐标更稳）
+    endpoint = { mode: 'fixed', point: form.endpointPoint, poiId: form.endpointPoiId || null, entranceId: form.endpointEntranceId || null, label: form.endpointLabel || '指定终点' };
   } else if (ep === 'named' && parsed.endpointRef && parsed.endpointRef.name && pack) {
     const g = pack.nodes.find((n) => n.type === 'entrance' && parsed.endpointRef.name.includes(n.name));
     endpoint = g
