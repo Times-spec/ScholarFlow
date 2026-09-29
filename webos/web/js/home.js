@@ -522,6 +522,12 @@ export function renderHome(view) {
 
     const searchInput = h('input', { class: 'input', placeholder: '先输入大致位置，如「东门」「地铁站」「酒店」' });
     const resultList = h('div', { style: 'max-height:170px;overflow-y:auto' });
+    // 场景快捷词：周边检索不一定返回大门类点位，但文本搜索能搜到「景区名+大门」
+    const sugRow = d.venueRef ? h('div', { class: 'chips', style: 'margin-top:6px' },
+      ['大门', '停车场', '地铁站'].map((kw) => h('button', {
+        class: 'chip',
+        onclick: () => { searchInput.value = d.venueRef.name + ' ' + kw; doSearch(); },
+      }, '🔍 ' + kw))) : null;
     const gateChips = gates.map((g) => h('button', {
       class: 'chip',
       onclick: () => {
@@ -536,7 +542,7 @@ export function renderHome(view) {
     const confirmBtn = h('button', { class: 'btn btn-primary btn-block', disabled: !preset }, isOrigin ? '确认起点' : '确认终点');
     const wrap = h('div', { class: 'map-wrap', style: 'margin-top:8px' });
     openSheet(isOrigin ? '起点定在哪里？' : '终点定在哪里？',
-      h('div', {}, searchInput, resultList, wrap, gateRow, pickLabel, confirmBtn));
+      h('div', {}, searchInput, sugRow, resultList, wrap, gateRow, pickLabel, confirmBtn));
 
     let map = null, marker = null, clickSeq = 0;
     let picked = preset ? { ...preset } : null;
